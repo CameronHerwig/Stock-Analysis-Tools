@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockData
+namespace Stock_Data
 {
     public interface IStockData
     {
@@ -18,5 +18,6 @@ namespace StockData
         double MOM { get; set; }
         double RSI { get; set; }
         double PriceGain { get; set; }
+        double ForwardPE { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockData
+namespace Stock_Data
 {
     public class StockData : IStockData
     {
@@ -18,5 +18,6 @@ namespace StockData
         public double MOM { get; set; }
         public double RSI { get; set; }
         public double PriceGain { get; set; }
+        public double ForwardPE { get; set; }
     }
 }

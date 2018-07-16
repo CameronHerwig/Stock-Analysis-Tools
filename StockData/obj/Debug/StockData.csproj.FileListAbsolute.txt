@@ -4,3 +4,7 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.csproj.CoreCompileInputs.cache
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.dll
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.xml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.csproj.CopyComplete

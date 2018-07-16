@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Stock_Data;
 
 namespace StockUI
 {
@@ -24,5 +25,16 @@ namespace StockUI
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var stock = new StockDataRepository();
+            var stockData = stock.RetrieveHTML;
+
+            Data.ItemsSource = stockData;
+            this.SizeToContent = SizeToContent.Width;
+
+        }
+
     }
 }

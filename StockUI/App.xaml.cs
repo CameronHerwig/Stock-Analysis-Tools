@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace StockAnalysisTools
+namespace StockUI
 {
     /// <summary>
     /// Interaction logic for App.xaml

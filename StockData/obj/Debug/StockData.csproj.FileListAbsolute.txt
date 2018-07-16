@@ -1,0 +1,6 @@
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\StockData.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\StockData.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.csprojAssemblyReference.cache
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.csproj.CoreCompileInputs.cache
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.pdb

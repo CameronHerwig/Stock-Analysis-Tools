@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Stock_Data;
 
 namespace StockUI
@@ -21,6 +9,9 @@ namespace StockUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        StockDataRepository stock = new StockDataRepository();
+        private string month;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,13 +19,35 @@ namespace StockUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var stock = new StockDataRepository();
-            var stockData = stock.RetrieveHTML;
-
-            Data.ItemsSource = stockData;
-            this.SizeToContent = SizeToContent.Width;
-
+            if(month != null)
+            {
+                var stockData = stock.RetrieveHTML(month); //sends month to get HTMl data
+                Data.ItemsSource = stockData;
+                this.SizeToContent = SizeToContent.Width; //fixes poor sizing
+            }           
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            
+            if (month != null)
+            {
+                var stockData = stock.RetrieveFundamentals(month); //sends month and adds fundamental data
+                Data.ItemsSource = null; 
+                Data.ItemsSource = stockData; //along with null set will refresh data
+                this.SizeToContent = SizeToContent.Width; //fixes poor sizing
+            }          
+        }
+
+        private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            month = ((ComboBoxItem)SelectMonth.SelectedItem).Content.ToString();
+            Title = month; //for debugging purposes
+        }
+
+        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+            //This is here so the compiler doesnt yell at me
+        }
     }
 }

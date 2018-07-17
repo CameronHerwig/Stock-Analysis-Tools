@@ -17,7 +17,7 @@ namespace Stock_Data
         double MACD { get; set; }
         double MOM { get; set; }
         double RSI { get; set; }
-        double PriceGain { get; set; }
+        double Gain { get; set; }
         double ForwardPE { get; set; }
     }
 }

@@ -1,0 +1,3 @@
+window.onload=function(){jQuery.post(ajaxurl,{'action':'get_whitelisted_iframe'},function(response){var url_list=response.substr(response.length-1,1)==='0'?response.substr(0,response.length-1):response;if(url_list!==""){var url_array=url_list.split(",");var current_url="";for(i=0;i<url_array.length;i++){if(window.parent.location.hostname==url_array[i].replace(/\s+/g,'')){current_url=url_array[i].replace(/\s+/g,'');break;}}
+try{if(window.parent&&window.parent.location.hostname!==current_url){throw new Error();}}
+catch(e){alert("Please visit www.investors.com to view this content.");window.location.href="/404";}}});};

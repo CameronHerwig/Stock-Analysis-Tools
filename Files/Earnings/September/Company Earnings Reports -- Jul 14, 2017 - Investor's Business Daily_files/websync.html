@@ -1,0 +1,2694 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0112)http://streamer.ibdcd.com/BATSQuotesv4/websync.ashx?token=87726445&src=js&AspxAutoDetectCookieSupport=1&type=pmf -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>FM.Server.PostMessage</title>
+<script type="text/javascript">
+fm = {};
+/*
+    http://www.JSON.org/json2.js
+    2011-02-23
+
+    Public Domain.
+
+    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+
+    See http://www.JSON.org/js.html
+
+
+    This file creates a global JSON object containing two methods: stringify
+    and parse.
+
+        JSON.stringify(value, replacer, space)
+            value       any JavaScript value, usually an object or array.
+
+            replacer    an optional parameter that determines how object
+                        values are stringified for objects. It can be a
+                        function or an array of strings.
+
+            space       an optional parameter that specifies the indentation
+                        of nested structures. If it is omitted, the text will
+                        be packed without extra whitespace. If it is a number,
+                        it will specify the number of spaces to indent at each
+                        level. If it is a string (such as '\t' or '&nbsp;'),
+                        it contains the characters used to indent at each level.
+
+            This method produces a JSON text from a JavaScript value.
+
+            When an object value is found, if the object contains a toJSONFM
+            method, its toJSONFM method will be called and the result will be
+            stringified. A toJSONFM method does not serialize: it returns the
+            value represented by the name/value pair that should be serialized,
+            or undefined if nothing should be serialized. The toJSONFM method
+            will be passed the key associated with the value, and this will be
+            bound to the value
+
+            For example, this would serialize Dates as ISO strings.
+
+                Date.prototype.toJSONFM = function (key) {
+                    function f(n) {
+                        // Format integers to have at least two digits.
+                        return n < 10 ? '0' + n : n;
+                    }
+
+                    return this.getUTCFullYear()   + '-' +
+                         f(this.getUTCMonth() + 1) + '-' +
+                         f(this.getUTCDate())      + 'T' +
+                         f(this.getUTCHours())     + ':' +
+                         f(this.getUTCMinutes())   + ':' +
+                         f(this.getUTCSeconds())   + 'Z';
+                };
+
+            You can provide an optional replacer method. It will be passed the
+            key and value of each member, with this bound to the containing
+            object. The value that is returned from your method will be
+            serialized. If your method returns undefined, then the member will
+            be excluded from the serialization.
+
+            If the replacer parameter is an array of strings, then it will be
+            used to select the members to be serialized. It filters the results
+            such that only members with keys listed in the replacer array are
+            stringified.
+
+            Values that do not have JSON representations, such as undefined or
+            functions, will not be serialized. Such values in objects will be
+            dropped; in arrays they will be replaced with null. You can use
+            a replacer function to replace those with JSON values.
+            JSON.stringify(undefined) returns undefined.
+
+            The optional space parameter produces a stringification of the
+            value that is filled with line breaks and indentation to make it
+            easier to read.
+
+            If the space parameter is a non-empty string, then that string will
+            be used for indentation. If the space parameter is a number, then
+            the indentation will be that many spaces.
+
+            Example:
+
+            text = JSON.stringify(['e', {pluribus: 'unum'}]);
+            // text is '["e",{"pluribus":"unum"}]'
+
+
+            text = JSON.stringify(['e', {pluribus: 'unum'}], null, '\t');
+            // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
+
+            text = JSON.stringify([new Date()], function (key, value) {
+                return this[key] instanceof Date ?
+                    'Date(' + this[key] + ')' : value;
+            });
+            // text is '["Date(---current time---)"]'
+
+
+        JSON.parse(text, reviver)
+            This method parses a JSON text to produce an object or array.
+            It can throw a SyntaxError exception.
+
+            The optional reviver parameter is a function that can filter and
+            transform the results. It receives each of the keys and values,
+            and its return value is used instead of the original value.
+            If it returns what it received, then the structure is not modified.
+            If it returns undefined then the member is deleted.
+
+            Example:
+
+            // Parse the text. Values that look like ISO date strings will
+            // be converted to Date objects.
+
+            myData = JSON.parse(text, function (key, value) {
+                var a;
+                if (typeof value === 'string') {
+                    a =
+/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
+                    if (a) {
+                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
+                            +a[5], +a[6]));
+                    }
+                }
+                return value;
+            });
+
+            myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
+                var d;
+                if (typeof value === 'string' &&
+                        value.slice(0, 5) === 'Date(' &&
+                        value.slice(-1) === ')') {
+                    d = new Date(value.slice(5, -1));
+                    if (d) {
+                        return d;
+                    }
+                }
+                return value;
+            });
+
+
+    This is a reference implementation. You are free to copy, modify, or
+    redistribute.
+*/
+
+/*jslint evil: true, strict: false, regexp: false */
+
+/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
+    call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
+    getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
+    lastIndex, length, parse, prototype, push, replace, slice, stringify,
+    test, toJSONFM, toString, valueOf
+*/
+
+
+// Create a JSON object only if one does not already exist. We create the
+// methods in a closure to avoid creating global variables.
+
+var JSON;
+if (!JSON) {
+    JSON = {};
+}
+
+(function () {
+    "use strict";
+
+    function f(n) {
+        // Format integers to have at least two digits.
+        return n < 10 ? '0' + n : n;
+    }
+
+    if (typeof Date.prototype.toJSONFM !== 'function') {
+
+        Date.prototype.toJSONFM = function (key) {
+
+            return isFinite(this.valueOf()) ?
+                this.getUTCFullYear()     + '-' +
+                f(this.getUTCMonth() + 1) + '-' +
+                f(this.getUTCDate())      + 'T' +
+                f(this.getUTCHours())     + ':' +
+                f(this.getUTCMinutes())   + ':' +
+                f(this.getUTCSeconds())   + 'Z' : null;
+        };
+
+        String.prototype.toJSONFM      =
+            Number.prototype.toJSONFM  =
+            Boolean.prototype.toJSONFM = function (key) {
+                return this.valueOf();
+            };
+    }
+
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        gap,
+        indent,
+        meta = {    // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        rep;
+
+
+    function quote(string) {
+
+// If the string contains no control characters, no quote characters, and no
+// backslash characters, then we can safely slap some quotes around it.
+// Otherwise we must also replace the offending characters with safe escape
+// sequences.
+
+        escapable.lastIndex = 0;
+        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+            var c = meta[a];
+            return typeof c === 'string' ? c :
+                '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"' : '"' + string + '"';
+    }
+
+
+    function str(key, holder) {
+
+// Produce a string from holder[key].
+
+        var i,          // The loop counter.
+            k,          // The member key.
+            v,          // The member value.
+            length,
+            mind = gap,
+            partial,
+            value = holder[key];
+
+// If the value has a toJSONFM method, call it to obtain a replacement value.
+
+        if (value && typeof value === 'object' &&
+                typeof value.toJSONFM === 'function') {
+            value = value.toJSONFM(key);
+        }
+
+// If we were called with a replacer function, then call the replacer to
+// obtain a replacement value.
+
+        if (typeof rep === 'function') {
+            value = rep.call(holder, key, value);
+        }
+
+// What happens next depends on the value's type.
+
+        switch (typeof value) {
+        case 'string':
+            return quote(value);
+
+        case 'number':
+
+// JSON numbers must be finite. Encode non-finite numbers as null.
+
+            return isFinite(value) ? String(value) : 'null';
+
+        case 'boolean':
+        case 'null':
+
+// If the value is a boolean or null, convert it to a string. Note:
+// typeof null does not produce 'null'. The case is included here in
+// the remote chance that this gets fixed someday.
+
+            return String(value);
+
+// If the type is 'object', we might be dealing with an object or an array or
+// null.
+
+        case 'object':
+
+// Due to a specification blunder in ECMAScript, typeof null is 'object',
+// so watch out for that case.
+
+            if (!value) {
+                return 'null';
+            }
+
+// Make an array to hold the partial results of stringifying this object value.
+
+            gap += indent;
+            partial = [];
+
+// Is the value an array?
+
+            if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+// The value is an array. Stringify every element. Use null as a placeholder
+// for non-JSON values.
+
+                length = value.length;
+                for (i = 0; i < length; i += 1) {
+                    partial[i] = str(i, value) || 'null';
+                }
+
+// Join all of the elements together, separated with commas, and wrap them in
+// brackets.
+
+                v = partial.length === 0 ? '[]' : gap ?
+                    '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' :
+                    '[' + partial.join(',') + ']';
+                gap = mind;
+                return v;
+            }
+
+// If the replacer is an array, use it to select the members to be stringified.
+
+            if (rep && typeof rep === 'object') {
+                length = rep.length;
+                for (i = 0; i < length; i += 1) {
+                    if (typeof rep[i] === 'string') {
+                        k = rep[i];
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            } else {
+
+// Otherwise, iterate through all of the keys in the object.
+
+                for (k in value) {
+                    if (Object.prototype.hasOwnProperty.call(value, k)) {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+
+// Join all of the member texts together, separated with commas,
+// and wrap them in braces.
+
+            v = partial.length === 0 ? '{}' : gap ?
+                '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' :
+                '{' + partial.join(',') + '}';
+            gap = mind;
+            return v;
+        }
+    }
+
+// If the JSON object does not yet have a stringify method, give it one.
+
+    if (typeof JSON.stringify !== 'function') {
+        JSON.stringify = function (value, replacer, space) {
+
+// The stringify method takes a value and an optional replacer, and an optional
+// space parameter, and returns a JSON text. The replacer can be a function
+// that can replace values, or an array of strings that will select the keys.
+// A default replacer method can be provided. Use of the space parameter can
+// produce text that is more easily readable.
+
+            var i;
+            gap = '';
+            indent = '';
+
+// If the space parameter is a number, make an indent string containing that
+// many spaces.
+
+            if (typeof space === 'number') {
+                for (i = 0; i < space; i += 1) {
+                    indent += ' ';
+                }
+
+// If the space parameter is a string, it will be used as the indent string.
+
+            } else if (typeof space === 'string') {
+                indent = space;
+            }
+
+// If there is a replacer, it must be a function or an array.
+// Otherwise, throw an error.
+
+            rep = replacer;
+            if (replacer && typeof replacer !== 'function' &&
+                    (typeof replacer !== 'object' ||
+                    typeof replacer.length !== 'number')) {
+                throw new Error('JSON.stringify');
+            }
+
+// Make a fake root object containing our value under the key of ''.
+// Return the result of stringifying the value.
+
+            return str('', {'': value});
+        };
+    }
+
+
+// If the JSON object does not yet have a parse method, give it one.
+
+    if (typeof JSON.parse !== 'function') {
+        JSON.parse = function (text, reviver) {
+
+// The parse method takes a text and an optional reviver function, and returns
+// a JavaScript value if the text is a valid JSON text.
+
+            var j;
+
+            function walk(holder, key) {
+
+// The walk method is used to recursively walk the resulting structure so
+// that modifications can be made.
+
+                var k, v, value = holder[key];
+                if (value && typeof value === 'object') {
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = walk(value, k);
+                            if (v !== undefined) {
+                                value[k] = v;
+                            } else {
+                                delete value[k];
+                            }
+                        }
+                    }
+                }
+                return reviver.call(holder, key, value);
+            }
+
+
+// Parsing happens in four stages. In the first stage, we replace certain
+// Unicode characters with escape sequences. JavaScript handles many characters
+// incorrectly, either silently deleting them, or treating them as line endings.
+
+            text = String(text);
+            cx.lastIndex = 0;
+            if (cx.test(text)) {
+                text = text.replace(cx, function (a) {
+                    return '\\u' +
+                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                });
+            }
+
+// In the second stage, we run the text against regular expressions that look
+// for non-JSON patterns. We are especially concerned with '()' and 'new'
+// because they can cause invocation, and '=' because it can cause mutation.
+// But just to be safe, we want to reject all unexpected forms.
+
+// We split the second stage into 4 regexp operations in order to work around
+// crippling inefficiencies in IE's and Safari's regexp engines. First we
+// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+// replace all simple value tokens with ']' characters. Third, we delete all
+// open brackets that follow a colon or comma or that begin the text. Finally,
+// we look to see that the remaining characters are only whitespace or ']' or
+// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+            if (/^[\],:{}\s]*$/
+                    .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                        .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                        .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+// In the third stage we use the eval function to compile the text into a
+// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+// in JavaScript: it can begin a block or an object literal. We wrap the text
+// in parens to eliminate the ambiguity.
+
+                j = eval('(' + text + ')');
+
+// In the optional fourth stage, we recursively walk the new structure, passing
+// each name/value pair to a reviver function for possible transformation.
+
+                return typeof reviver === 'function' ?
+                    walk({'': j}, '') : j;
+            }
+
+// If the text is not JSON parseable, then a SyntaxError is thrown.
+
+            throw new SyntaxError('JSON.parse');
+        };
+    }
+}());
+
+fm.json = (function() {
+
+  json.name = 'json';
+
+  function json() {}
+
+  json.useMicrosoftDateFormat = true;
+
+  json._dateRegex = /^\/Date\((\d+[\-|\+]?\d{0,4})\)\//;
+
+  json._reviver = function(key, value) {
+    var delim, parts, ticks, ticksAndZone;
+    if (value && typeof value === 'string' && json._dateRegex.test(value)) {
+      ticksAndZone = value.match(json._dateRegex)[1];
+      delim = ticksAndZone.indexOf('-') > -1 ? '-' : '+';
+      parts = ticksAndZone.split(delim);
+      ticks = parseInt(parts[0], 10);
+      return new Date(ticks);
+    }
+    return value;
+  };
+
+  Date.prototype.toJSONFM = function(key) {
+    if (isFinite(this.valueOf())) {
+      return '/Date(' + this.getTime() + '-0000)/';
+    } else {
+      return null;
+    }
+  };
+
+  json.deserialize = function() {
+    if (arguments.length === 0 || arguments[0] === null || arguments[0] === '') {
+      return null;
+    }
+    if (json.useMicrosoftDateFormat) {
+      return JSON.parse(arguments[0], json._reviver);
+    }
+    return JSON.parse.apply(json, arguments);
+  };
+
+  json.serialize = function() {
+    var booleanToJSON, dateToJSON, j, numberToJSON, stringToJSON;
+    if (json.useMicrosoftDateFormat) {
+      dateToJSON = Date.prototype.toJSON;
+      stringToJSON = String.prototype.toJSON;
+      numberToJSON = Number.prototype.toJSON;
+      booleanToJSON = Boolean.prototype.toJSON;
+      Date.prototype.toJSON = Date.prototype.toJSONFM;
+      String.prototype.toJSON = String.prototype.toJSONFM;
+      Number.prototype.toJSON = Number.prototype.toJSONFM;
+      Boolean.prototype.toJSON = Boolean.prototype.toJSONFM;
+      j = JSON.stringify.apply(json, arguments).replace(/\//g, '\\/');
+      Date.prototype.toJSON = dateToJSON;
+      String.prototype.toJSON = stringToJSON;
+      Number.prototype.toJSON = numberToJSON;
+      Boolean.prototype.toJSON = booleanToJSON;
+      return j;
+    }
+    return JSON.stringify.apply(json, arguments);
+  };
+
+  return json;
+
+}).call(this);
+
+
+fm.util = (function() {
+  var _this = this;
+
+  function util() {}
+
+  util._xdCache = {};
+
+  util.isArray = function(obj) {
+    return Object.prototype.toString.call(obj) === '[object Array]';
+  };
+
+  util.isPlainObject = function(obj) {
+    var key, x;
+    if (!obj || Object.prototype.toString.call(obj) !== '[object Object]' || obj.nodeType || obj === obj.window) {
+      return false;
+    }
+    try {
+      if (obj.constructor && !Object.prototype.hasOwnProperty.call(obj, "constructor") && !Object.prototype.hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf")) {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+    for (key in obj) {
+      x = 0;
+    }
+    return key === void 0 || Object.prototype.hasOwnProperty.call(obj, key);
+  };
+
+  util.canAttachProperties = function(instance, obj) {
+    var key, setter, setterName, value;
+    for (key in obj) {
+      value = obj[key];
+      setterName = 'set' + key.charAt(0).toUpperCase() + key.substring(1);
+      setter = instance[setterName];
+      if (!setter || Object.prototype.toString.call(setter) !== '[object Function]') {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  util.attachProperties = function(instance, obj) {
+    var key, setter, setterName, value, _results;
+    _results = [];
+    for (key in obj) {
+      value = obj[key];
+      setterName = 'set' + key.charAt(0).toUpperCase() + key.substring(1);
+      setter = instance[setterName];
+      _results.push(setter.call(instance, value));
+    }
+    return _results;
+  };
+
+  util.isIE = function() {
+    return !!document.protocol;
+  };
+
+  util.isIE6 = function() {
+    return util.isIE() && !window.XMLHttpRequest;
+  };
+
+  util.isIE7 = function() {
+    return util.isIE() && window.XMLHttpRequest && !document.implementation;
+  };
+
+  util.isIE8 = function() {
+    return util.isIE() && document.implementation && document.implementation.hasFeature && !document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+  };
+
+  util.isIE9 = function() {
+    return util.isIE() && document.implementation && document.implementation.hasFeature && document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+  };
+
+  util.isXD = function(url1, url2) {
+    var handlerHost, host1, host2, thisHost;
+    try {
+      if (url2) {
+        host1 = util.getHost(url1);
+        host2 = util.getHost(url2);
+        return util.compareHost(host1, host2);
+      } else {
+        if (!util._xdCache[url1]) {
+          handlerHost = util.getHost(url1);
+          thisHost = util.getHost();
+          util._xdCache[url1] = util.compareHost(handlerHost, thisHost) ? 'y' : 'n';
+        }
+        return util._xdCache[url1] === 'y';
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  util.getHost = function(url) {
+    var parsed;
+    if (!url) {
+      return util.getCurrentHost();
+    }
+    parsed = util.parseUrl(url);
+    if (!parsed.protocol) {
+      return util.getCurrentHost();
+    }
+    return parsed;
+  };
+
+  util.compareHost = function(host1, host2) {
+    return host1.server !== host2.server || ((host1.port || host2.port) && host1.port !== host2.port);
+  };
+
+  util.getCurrentHost = function() {
+    var l;
+    l = document.location;
+    return {
+      protocol: l.protocol,
+      server: l.hostname,
+      port: l.port
+    };
+  };
+
+  util.parseUrl = function(url) {
+    var parts;
+    parts = /(((http|ws)s?:)\/\/)?([\-\w\.\*]+)+(:(\d+))?(\/([^\?]*(\?\S+)?)?)?/i.exec(url);
+    if (parts.length < 6) {
+      throw new Error('Invalid URL (' + url + ').');
+    }
+    return {
+      prefix: parts[1],
+      protocol: parts[2],
+      server: parts[4],
+      postfix: parts[5],
+      port: parts[6],
+      path: parts[7]
+    };
+  };
+
+  util.absolutizeUrl = function(url) {
+    var base, l, parsed;
+    if (!url) {
+      return url;
+    }
+    parsed = util.parseUrl(url);
+    if (parsed.protocol) {
+      if (parsed.server.indexOf('*') === -1) {
+        return url;
+      }
+      url = parsed.prefix + util.wildcard(parsed.server);
+      if (parsed.postfix) {
+        url += parsed.postfix;
+      }
+      if (parsed.path) {
+        url += parsed.path;
+      }
+      return url;
+    }
+    l = document.location;
+    base = l.protocol + '//' + l.host;
+    if (url.charAt(0) === '/') {
+      return base + url;
+    } else {
+      return base + l.pathname.substring(0, l.pathname.lastIndexOf('/') + 1) + url;
+    }
+  };
+
+  util.wildcard = function(str) {
+    return str.replace('*', util.getWildcard());
+  };
+
+  util._chars = 'abcdefghijklmnopqrstuvwxyz';
+
+  util.getWildcard = function() {
+    if (!util._wildcard) {
+      util._wildcard = util.randomChar(util._chars);
+    }
+    return util._wildcard;
+  };
+
+  util.randomChar = function(str) {
+    if (!str) {
+      return str;
+    }
+    return str.charAt(Math.floor(Math.random() * str.length));
+  };
+
+  util.observe = function(element, event, handler) {
+    if (element.addEventListener) {
+      return element.addEventListener(event, handler, false);
+    } else if (element.attachEvent) {
+      return element.attachEvent('on' + event, handler);
+    } else {
+      return element['on' + event] = handler;
+    }
+  };
+
+  util.unobserve = function(element, event, handler) {
+    if (element.removeEventListener) {
+      return element.removeEventListener(event, handler, false);
+    } else {
+      return element.detachEvent('on' + event, handler);
+    }
+  };
+
+  util.extend = function(dest, src) {
+    var key;
+    for (key in src) {
+      dest[key] = src[key];
+    }
+    return dest;
+  };
+
+  util.logging = true;
+
+  util.log = function(text) {
+    var div;
+    if (!util.logging) {
+      return;
+    }
+    if (!document.body) {
+      util.addOnLoad(function() {
+        return util.log(text);
+      });
+      return;
+    }
+    if (!util._logContainer) {
+      util._logContainer = document.createElement('div');
+      util._logContainer.className = 'fm-log';
+      util._logContainer.style.position = 'absolute';
+      util._logContainer.style.zIndex = 99999;
+      util._logContainer.style.right = '5px';
+      util._logContainer.style.top = '5px';
+      document.body.appendChild(util._logContainer);
+    }
+    div = document.createElement('div');
+    div.innerHTML = text;
+    return util._logContainer.appendChild(div);
+  };
+
+  util._loadFunctions = [];
+
+  util.addOnLoad = function(fn) {
+    if (util._readyRun) {
+      return window.setTimeout(fn, 1);
+    } else {
+      return util._loadFunctions.push(fn);
+    }
+  };
+
+  util.ready = function() {
+    if (util._readyRun) {
+      return;
+    }
+    util._readyRun = true;
+    return window.setTimeout(function() {
+      var loadFunction, _i, _len, _ref, _results;
+      _ref = util._loadFunctions;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        loadFunction = _ref[_i];
+        _results.push(loadFunction());
+      }
+      return _results;
+    }, 1);
+  };
+
+  util.bindReady = function() {
+    var topLevel;
+    if (util._readyBound) {
+      return;
+    }
+    util._readyBound = true;
+    if (document.readyState === 'complete') {
+      return window.setTimeout(function() {
+        return util.ready();
+      }, 1);
+    } else if (document.addEventListener) {
+      document.addEventListener("DOMContentLoaded", function() {
+        document.removeEventListener("DOMContentLoaded", arguments.callee, false);
+        return util.ready();
+      }, false);
+      return window.addEventListener("load", function() {
+        window.removeEventListener("load", arguments.callee, false);
+        return util.ready();
+      }, false);
+    } else if (document.attachEvent) {
+      document.attachEvent("onreadystatechange", function() {
+        if (document.readyState === "complete") {
+          document.detachEvent("onreadystatechange", arguments.callee);
+          return util.ready();
+        }
+      });
+      try {
+        topLevel = window.frameElement === null;
+      } catch (_error) {}
+      if (document.documentElement.doScroll && topLevel) {
+        return (function() {
+          if (util._loaded) {
+            return;
+          }
+          try {
+            document.documentElement.doScroll("left");
+          } catch (error) {
+            window.setTimeout(arguments.callee, 0);
+            return;
+          }
+          return util.ready();
+        })();
+      }
+    } else {
+      return util.ready();
+    }
+  };
+
+  if (!util._loaded) {
+    util.addOnLoad(function() {
+      return util._loaded = true;
+    });
+  }
+
+  util.bindReady();
+
+  return util;
+
+}).call(this);
+
+
+fm.xhr = (function() {
+  var _this = this;
+
+  function xhr() {}
+
+  xhr._count = 0;
+
+  xhr._current = {};
+
+  xhr._disableBinary = true;
+
+  xhr.setDisableBinary = function(disableBinary) {
+    return xhr._disableBinary = disableBinary;
+  };
+
+  xhr.getDisableBinary = function() {
+    if (typeof Uint8Array === 'undefined') {
+      return true;
+    }
+    return xhr._disableBinary;
+  };
+
+  fm.util.observe(window, 'unload', function() {
+    var c, x, _ref;
+    _ref = xhr._current;
+    for (c in _ref) {
+      x = _ref[c];
+      try {
+        x._abortingOnUnload = true;
+        x.abort();
+      } catch (_error) {}
+    }
+  });
+
+  xhr.failureHandler = function(options, message) {
+    if (options.onFailure) {
+      return options.onFailure({
+        message: message
+      });
+    }
+  };
+
+  xhr.successHandler = function(options, x) {
+    var content, contentBinary, headerString, headers, line, name, parts, receivedBinary, value, _i, _len, _ref;
+    if (options.onSuccess) {
+      headers = {};
+      headerString = x.getAllResponseHeaders();
+      if (headerString) {
+        _ref = headerString.split(/\r?\n/);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          line = _ref[_i];
+          parts = line.split(':');
+          if (parts.length !== 2) {
+            continue;
+          }
+          name = parts[0].replace(/\s+$/, '');
+          value = parts[1].replace(/^\s+/, '');
+          headers[name] = value;
+        }
+      }
+      content = null;
+      contentBinary = null;
+      receivedBinary = false;
+      if (!xhr.getDisableBinary()) {
+        try {
+          if (x.responseType === 'arraybuffer') {
+            contentBinary = new Uint8Array(x.response);
+            if (headers['Content-Type'] !== 'application/octet-stream') {
+              content = fm.encoding.getUtf8().getString(contentBinary);
+            }
+            receivedBinary = true;
+          }
+        } catch (error) {
+          xhr.setDisableBinary(true);
+        }
+      }
+      if (receivedBinary) {
+        if (content) {
+          fm.log.debug('Received XHR text (binary).');
+        } else {
+          fm.log.debug('Received XHR binary.');
+        }
+      } else {
+        content = x.responseText;
+        fm.log.debug('Received XHR text.');
+      }
+      return options.onSuccess({
+        content: content,
+        contentBinary: contentBinary,
+        statusCode: x.status,
+        headers: headers
+      });
+    }
+  };
+
+  xhr.handler = function(options, x) {
+    if (x._aborting) {
+      return xhr.failureHandler(options, 'XHR request timed out.');
+    } else {
+      if (options.onResponseReceived) {
+        options.onResponseReceived(x);
+      }
+      return xhr.successHandler(options, x);
+    }
+  };
+
+  xhr.send = function(options) {
+    var c, name, sentBinary, url, value, x, xhrTimeout, _ref;
+    options = fm.util.extend({
+      sync: false,
+      url: '',
+      method: 'POST',
+      content: null,
+      contentBinary: null,
+      headers: {},
+      timeout: 15000,
+      abortOnUnload: false,
+      cacheBusterParameterName: '_cb',
+      onRequestCreated: function() {},
+      onResponseReceived: function() {},
+      onFailure: function() {},
+      onSuccess: function() {}
+    }, options || {});
+    try {
+      if (window.XMLHttpRequest) {
+        x = new XMLHttpRequest();
+      } else {
+        try {
+          x = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+        } catch (_error) {}
+        if (!x) {
+          try {
+            x = new ActiveXObject('Microsoft.XMLHTTP');
+          } catch (_error) {}
+        }
+      }
+      if (!x) {
+        return false;
+      }
+      url = options.url;
+      url = url + (url.indexOf('?') === -1 ? '?' : '&') + options.cacheBusterParameterName + '=' + (new Date()).getTime();
+      x.open(options.method, url, !options.sync);
+      _ref = options.headers;
+      for (name in _ref) {
+        value = _ref[name];
+        if (name.toLowerCase() !== 'referer' && name.toLowerCase() !== 'origin') {
+          x.setRequestHeader(name, value);
+        }
+      }
+      if (xhr.getDisableBinary()) {
+        x.setRequestHeader('X-FM-DisableBinary', 'true');
+      }
+      if ('withCredentials' in x) {
+        x.withCredentials = true;
+      }
+      if (!xhr.getDisableBinary() && !options.sync) {
+        try {
+          x.responseType = 'arraybuffer';
+        } catch (error) {
+          xhr.setDisableBinary(true);
+        }
+      }
+      if (options.onRequestCreated) {
+        options.onRequestCreated(x);
+      }
+      if (options.abortOnUnload) {
+        c = ++xhr._count;
+        xhr._current[c] = x;
+      }
+      if (!options.sync) {
+        x.onreadystatechange = function() {
+          if (x.readyState > 3 && !x._abortingOnUnload) {
+            clearTimeout(xhrTimeout);
+            try {
+              x.onreadystatechange = null;
+            } catch (ex) {
+              x.onreadystatechange = function() {};
+            }
+            if (x.status > 0) {
+              xhr.handler(options, x);
+            } else {
+              xhr.failureHandler(options, 'Invalid XHR response.');
+            }
+            if (options.abortOnUnload) {
+              return delete xhr._current[c];
+            }
+          }
+        };
+      }
+      sentBinary = false;
+      if (!xhr.getDisableBinary() && options.contentBinary) {
+        try {
+          x.send(options.contentBinary.buffer);
+          sentBinary = true;
+        } catch (error1) {
+          try {
+            x.send(options.contentBinary);
+            sentBinary = true;
+          } catch (error2) {
+            xhr.setDisableBinary(true);
+          }
+        }
+      }
+      if (sentBinary) {
+        fm.log.debug('Sent XHR binary.');
+      } else {
+        if (options.content) {
+          x.setRequestHeader('Content-Type', 'application/json');
+          x.send(options.content);
+        } else {
+          x.send();
+        }
+        fm.log.debug('Sent XHR text.');
+      }
+      xhrTimeout = window.setTimeout(function() {
+        try {
+          x._aborting = true;
+          return x.abort();
+        } catch (_error) {}
+      }, options.timeout);
+      if (options.sync) {
+        xhr.handler(options, x);
+        if (options.abortOnUnload) {
+          delete xhr._xhrCurrent[c];
+        }
+      }
+      return true;
+    } catch (error) {
+      return xhr.failureHandler(options, 'XHR request failed. ' + (error.message || error.error || error.description || error));
+    }
+  };
+
+  return xhr;
+
+}).call(this);
+
+
+fm.object = (function() {
+
+  function object() {}
+
+  return object;
+
+})();
+
+
+fm.intExtensions = (function() {
+
+  function intExtensions() {}
+
+  intExtensions.toString = function() {
+    return arguments[0].toString();
+  };
+
+  return intExtensions;
+
+})();
+
+
+fm.stringExtensions = (function() {
+
+  function stringExtensions() {}
+
+  stringExtensions.empty = '';
+
+  stringExtensions.concat = function(strs) {
+    var sb, str, _i, _len;
+    sb = new fm.stringBuilder();
+    for (_i = 0, _len = strs.length; _i < _len; _i++) {
+      str = strs[_i];
+      sb.append(str);
+    }
+    return sb.toString();
+  };
+
+  stringExtensions.toString = function() {
+    return arguments[0];
+  };
+
+  stringExtensions.trim = function(s) {
+    return s.replace(/^\s+|\s+$/g, '');
+  };
+
+  stringExtensions.concat = function() {
+    var s, x, _i, _j, _len, _len1, _ref;
+    s = '';
+    if (arguments.length === 1 && fm.util.isArray(arguments[0])) {
+      _ref = arguments[0];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        x = _ref[_i];
+        s = s + x;
+      }
+    } else {
+      for (_j = 0, _len1 = arguments.length; _j < _len1; _j++) {
+        x = arguments[_j];
+        s = s + x;
+      }
+    }
+    return s;
+  };
+
+  stringExtensions.join = function(separator, array) {
+    var i, sb, str, _i, _len;
+    sb = new fm.stringBuilder();
+    for (i = _i = 0, _len = array.length; _i < _len; i = ++_i) {
+      str = array[i];
+      if (i > 0) {
+        sb.append(separator);
+      }
+      sb.append(str);
+    }
+    return sb.toString();
+  };
+
+  stringExtensions.split = function(s, chars) {
+    var c, i, splits, start, _i, _j, _len, _ref;
+    splits = [];
+    start = 0;
+    for (i = _i = 0, _ref = s.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (_j = 0, _len = chars.length; _j < _len; _j++) {
+        c = chars[_j];
+        if (c === s.charAt(i)) {
+          splits.push(s.substring(start, i));
+          start = i + 1;
+        }
+      }
+    }
+    splits.push(s.substring(start, s.length));
+    return splits;
+  };
+
+  stringExtensions.isNullOrEmpty = function(s) {
+    return s === null || s === "";
+  };
+
+  stringExtensions.indexOf = function() {
+    var s, str, stringComparison;
+    str = arguments[0];
+    s = arguments[1];
+    if (arguments.length > 2) {
+      stringComparison = arguments[2];
+      if (stringComparison === fm.stringComparison.CurrentCultureIgnoreCase || stringComparison === fm.stringComparison.InvariantCultureIgnoreCase || stringComparison === fm.stringComparison.OrdinalIgnoreCase) {
+        return str.toLowerCase().indexOf(s.toLowerCase());
+      }
+    }
+    return str.indexOf(s);
+  };
+
+  stringExtensions.startsWith = function() {
+    var s, str, stringComparison;
+    str = arguments[0];
+    s = arguments[1];
+    if (arguments.length > 2) {
+      stringComparison = arguments[2];
+      if (stringComparison === fm.stringComparison.CurrentCultureIgnoreCase || stringComparison === fm.stringComparison.InvariantCultureIgnoreCase || stringComparison === fm.stringComparison.OrdinalIgnoreCase) {
+        return str.toLowerCase().indexOf(s.toLowerCase()) === 0;
+      }
+    }
+    return str.indexOf(s) === 0;
+  };
+
+  stringExtensions.endsWith = function() {
+    var s, str, stringComparison;
+    str = arguments[0];
+    s = arguments[1];
+    if (arguments.length > 2) {
+      stringComparison = arguments[2];
+      if (stringComparison === fm.stringComparison.CurrentCultureIgnoreCase || stringComparison === fm.stringComparison.InvariantCultureIgnoreCase || stringComparison === fm.stringComparison.OrdinalIgnoreCase) {
+        return str.toLowerCase().indexOf(s.toLowerCase(), str.length - s.length) !== -1;
+      }
+    }
+    return str.indexOf(s, str.length - s.length) !== -1;
+  };
+
+  stringExtensions.compareTo = function() {
+    var s1, s2;
+    s1 = arguments[0];
+    s2 = arguments[1];
+    if (s1.toString() < s2.toString()) {
+      return -1;
+    }
+    if (s1.toString() > s2.toString()) {
+      return 1;
+    }
+    return 0;
+  };
+
+  stringExtensions.format = function() {
+    var args, format, formatter, i, _i, _ref;
+    format = arguments[0];
+    args = [];
+    if (arguments.length > 1) {
+      if (fm.util.isArray(arguments[1])) {
+        args = arguments[1];
+      } else {
+        for (i = _i = 1, _ref = arguments.length - 1; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
+          args.push(arguments[i] ? arguments[i] : '');
+        }
+      }
+    }
+    formatter = function(match, number) {
+      if (args[number] != null) {
+        return args[number];
+      }
+      return match;
+    };
+    return format.replace(/{(\d+)}/g, formatter);
+  };
+
+  stringExtensions.toLower = function() {
+    return arguments[0].toLowerCase();
+  };
+
+  stringExtensions.getLength = function() {
+    return arguments[0].length;
+  };
+
+  stringExtensions.getChars = function(str) {
+    var chars, i, _i, _ref;
+    chars = [];
+    for (i = _i = 0, _ref = str.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      chars.push(str[i]);
+    }
+    return new chars;
+  };
+
+  stringExtensions.substring = function(str, startIndex, length) {
+    return str.substring(startIndex, startIndex + length);
+  };
+
+  return stringExtensions;
+
+}).call(this);
+
+
+
+fm.dateTime = (function() {
+
+  function dateTime() {
+    this.getSecond = __bind(this.getSecond, this);
+
+    this.getMinute = __bind(this.getMinute, this);
+
+    this.getHour = __bind(this.getHour, this);
+
+    this.getDay = __bind(this.getDay, this);
+
+    this.getMonth = __bind(this.getMonth, this);
+
+    this.getYear = __bind(this.getYear, this);
+
+    this.toUniversalTime = __bind(this.toUniversalTime, this);
+
+    this.getTicks = __bind(this.getTicks, this);
+
+    var day, hour, minute, month, second, year;
+    if (arguments.length === 1) {
+      this._date = arguments[0];
+    } else if (arguments.length === 6) {
+      year = arguments[0];
+      month = arguments[1];
+      day = arguments[2];
+      hour = arguments[3];
+      minute = arguments[4];
+      second = arguments[5];
+      this._date = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+    } else {
+      throw new Error('Unknown argument set.');
+    }
+  }
+
+  dateTime.getNow = function() {
+    return new fm.dateTime(new Date());
+  };
+
+  dateTime.getUtcNow = function() {
+    return new fm.dateTime(new Date());
+  };
+
+  dateTime.prototype.getTicks = function() {
+    return 621355968000000000 + this._date.getTime() * 10000;
+  };
+
+  dateTime.prototype.toUniversalTime = function() {
+    return new fm.dateTime(this._date);
+  };
+
+  dateTime.prototype.getYear = function() {
+    return this._date.getUTCFullYear();
+  };
+
+  dateTime.prototype.getMonth = function() {
+    return this._date.getUTCMonth() + 1;
+  };
+
+  dateTime.prototype.getDay = function() {
+    return this._date.getUTCDate();
+  };
+
+  dateTime.prototype.getHour = function() {
+    return this._date.getUTCHours();
+  };
+
+  dateTime.prototype.getMinute = function() {
+    return this._date.getUTCMinutes();
+  };
+
+  dateTime.prototype.getSecond = function() {
+    return this._date.getUTCSeconds();
+  };
+
+  return dateTime;
+
+}).call(this);
+
+/*<span id='cls-fm.logLevel'>&nbsp;</span>
+*/
+
+/**
+@class fm.logLevel
+ <div>
+ The level at which to log.
+ </div>
+
+@extends fm.enum
+*/
+
+fm.logLevel = {
+  /*<span id='prop-fm.logLevel-Debug'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs messages relevant to development and troubleshooting.
+  	 </div>
+  */
+
+  Debug: 1,
+  /*<span id='prop-fm.logLevel-Info'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs messages relevant to expected use.
+  	 </div>
+  */
+
+  Info: 2,
+  /*<span id='prop-fm.logLevel-Warn'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs messages relevant to potential pit-falls.
+  	 </div>
+  */
+
+  Warn: 3,
+  /*<span id='prop-fm.logLevel-Error'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs messages relevant to errors that allow program execution to continue.
+  	 </div>
+  */
+
+  Error: 4,
+  /*<span id='prop-fm.logLevel-Fatal'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs messages relevant to errors that require the program to terminate.
+  	 </div>
+  */
+
+  Fatal: 5,
+  /*<span id='prop-fm.logLevel-None'>&nbsp;</span>
+  */
+
+  /**
+  	@type {fm.logLevel}
+  	@description  <div>
+  	 Logs nothing.
+  	 </div>
+  */
+
+  None: 6
+};
+
+/*<span id='cls-fm.logProvider'>&nbsp;</span>
+*/
+
+/**
+@class fm.logProvider
+ <div>
+ Base class for all logging provider implementations.
+ </div>
+
+@extends fm.object
+*/
+
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+fm.logProvider = (function(_super) {
+
+  __extends(logProvider, _super);
+
+  /*<span id='prop--_level'>&nbsp;</span>
+  */
+
+
+  /**
+  	@ignore {}
+  	@description
+  */
+
+
+  logProvider.prototype._level = null;
+
+  /*<span id='prop--'>&nbsp;</span>
+  */
+
+
+  /**
+  	@ignore {}
+  	@description
+  */
+
+
+  function logProvider() {
+    this.warnFormat = __bind(this.warnFormat, this);
+
+    this.warn = __bind(this.warn, this);
+
+    this.setLevel = __bind(this.setLevel, this);
+
+    this.log = __bind(this.log, this);
+
+    this.isEnabled = __bind(this.isEnabled, this);
+
+    this.infoFormat = __bind(this.infoFormat, this);
+
+    this.info = __bind(this.info, this);
+
+    this.getLevel = __bind(this.getLevel, this);
+
+    this.getIsWarnEnabled = __bind(this.getIsWarnEnabled, this);
+
+    this.getIsInfoEnabled = __bind(this.getIsInfoEnabled, this);
+
+    this.getIsFatalEnabled = __bind(this.getIsFatalEnabled, this);
+
+    this.getIsErrorEnabled = __bind(this.getIsErrorEnabled, this);
+
+    this.getIsDebugEnabled = __bind(this.getIsDebugEnabled, this);
+
+    this.fatalFormat = __bind(this.fatalFormat, this);
+
+    this.fatal = __bind(this.fatal, this);
+
+    this.errorFormat = __bind(this.errorFormat, this);
+
+    this.error = __bind(this.error, this);
+
+    this.debugFormat = __bind(this.debugFormat, this);
+
+    this.debug = __bind(this.debug, this);
+
+    this._log = __bind(this._log, this);
+    if (arguments.length === 1 && fm.util.isPlainObject(arguments[0]) && fm.util.canAttachProperties(this, arguments[0])) {
+      logProvider.__super__.constructor.call(this);
+      this.setLevel(fm.logLevel.None);
+      fm.util.attachProperties(this, arguments[0]);
+      return;
+    }
+    logProvider.__super__.constructor.call(this);
+    this.setLevel(fm.logLevel.None);
+  }
+
+  /*<span id='method-fm.logProvider-getPrefix'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Converts a log-level to a 5-character string for
+  	 consistently-spaced character sequences.
+  	 </div>
+  	@function getPrefix
+  	@param {fm.logLevel} level The log level.
+  	@param {Boolean} includeTimestamp Whether to include a timestamp in the prefix.
+  	@return {String} The log level as an upper-case string
+  	 with right-side whitespace padding to ensure
+  	 a 5-character sequence.
+  */
+
+
+  logProvider.getPrefix = function() {
+    var includeTimestamp, level, prefixLevel;
+    level = arguments[0];
+    includeTimestamp = arguments[1];
+    prefixLevel = fm.logProvider.getPrefixLevel(level);
+    if (includeTimestamp) {
+      prefixLevel = fm.stringExtensions.format("{0} {1}", prefixLevel, fm.logProvider.getPrefixTimestamp(fm.dateTime.getUtcNow()));
+    }
+    return prefixLevel;
+  };
+
+  /*<span id='method-fm.logProvider-getPrefixLevel'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Converts a log-level to a 5-character string for
+  	 consistently-spaced character sequences.
+  	 </div>
+  	@function getPrefixLevel
+  	@param {fm.logLevel} level The log level.
+  	@return {String} The log level as an upper-case string
+  	 with right-side whitespace padding to ensure
+  	 a 5-character sequence.
+  */
+
+
+  logProvider.getPrefixLevel = function() {
+    var level;
+    level = arguments[0];
+    switch (level) {
+      case fm.logLevel.Debug:
+        return "DEBUG";
+      case fm.logLevel.Info:
+        return "INFO ";
+      case fm.logLevel.Warn:
+        return "WARN ";
+      case fm.logLevel.Error:
+        return "ERROR";
+      case fm.logLevel.Fatal:
+        return "FATAL";
+      case fm.logLevel.None:
+        return "NONE ";
+    }
+    return "?????";
+  };
+
+  /*<span id='method-fm.logProvider-getPrefixTimestamp'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Converts a timestamp to a string formatted for
+  	 rendering in a log message (yyyy/MM/dd-hh:mm:ss).
+  	 </div>
+  	@function getPrefixTimestamp
+  	@param {fm.dateTime} timestamp The timestamp.
+  	@return {String} The timestamp as a formatted string.
+  */
+
+
+  logProvider.getPrefixTimestamp = function() {
+    var str, str2, str3, str4, str5, str6, timestamp;
+    timestamp = arguments[0];
+    str = fm.intExtensions.toString(timestamp.getYear());
+    str2 = fm.intExtensions.toString(timestamp.getMonth());
+    str3 = fm.intExtensions.toString(timestamp.getDay());
+    str4 = fm.intExtensions.toString(timestamp.getHour());
+    str5 = fm.intExtensions.toString(timestamp.getMinute());
+    str6 = fm.intExtensions.toString(timestamp.getSecond());
+    while (str.length < 4) {
+      str = fm.stringExtensions.concat("0", str);
+    }
+    while (str2.length < 2) {
+      str2 = fm.stringExtensions.concat("0", str2);
+    }
+    while (str3.length < 2) {
+      str3 = fm.stringExtensions.concat("0", str3);
+    }
+    while (str4.length < 2) {
+      str4 = fm.stringExtensions.concat("0", str4);
+    }
+    while (str5.length < 2) {
+      str5 = fm.stringExtensions.concat("0", str5);
+    }
+    while (str6.length < 2) {
+      str6 = fm.stringExtensions.concat("0", str6);
+    }
+    return fm.stringExtensions.format("{0}/{1}/{2}-{3}:{4}:{5}", [str, str2, str3, str4, str5, str6]);
+  };
+
+  logProvider.prototype._log = function() {
+    var ex, level, message;
+    if (arguments.length === 2) {
+      level = arguments[0];
+      message = arguments[1];
+      if (this.isEnabled(level)) {
+        this.log(level, message);
+      }
+      return;
+    }
+    if (arguments.length === 3) {
+      level = arguments[0];
+      message = arguments[1];
+      ex = arguments[2];
+      if (this.isEnabled(level)) {
+        this.log(level, message, ex);
+      }
+    }
+  };
+
+  /*<span id='method-fm.logProvider-debug'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a debug-level message.
+  	 </div>
+  	@function debug
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.debug = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      this._log(fm.logLevel.Debug, message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      this._log(fm.logLevel.Debug, message, ex);
+    }
+  };
+
+  /*<span id='method-fm.logProvider-debugFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a debug-level message.
+  	 </div>
+  	@function debugFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.debugFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return this.debug(fm.stringExtensions.format(format, args));
+  };
+
+  /*<span id='method-fm.logProvider-error'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an error-level message.
+  	 </div>
+  	@function error
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.error = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      this._log(fm.logLevel.Error, message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      this._log(fm.logLevel.Error, message, ex);
+    }
+  };
+
+  /*<span id='method-fm.logProvider-errorFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an error-level message.
+  	 </div>
+  	@function errorFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.errorFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return this.error(fm.stringExtensions.format(format, args));
+  };
+
+  /*<span id='method-fm.logProvider-fatal'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a fatal-level message.
+  	 </div>
+  	@function fatal
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.fatal = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      this._log(fm.logLevel.Fatal, message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      this._log(fm.logLevel.Fatal, message, ex);
+    }
+  };
+
+  /*<span id='method-fm.logProvider-fatalFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a fatal-level message.
+  	 </div>
+  	@function fatalFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.fatalFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return this.fatal(fm.stringExtensions.format(format, args));
+  };
+
+  /*<span id='method-fm.logProvider-getIsDebugEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for debug-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for debug-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsDebugEnabled
+  	@return {Boolean}
+  */
+
+
+  logProvider.prototype.getIsDebugEnabled = function() {
+    return this.isEnabled(fm.logLevel.Debug);
+  };
+
+  /*<span id='method-fm.logProvider-getIsErrorEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for error-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for error-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsErrorEnabled
+  	@return {Boolean}
+  */
+
+
+  logProvider.prototype.getIsErrorEnabled = function() {
+    return this.isEnabled(fm.logLevel.Error);
+  };
+
+  /*<span id='method-fm.logProvider-getIsFatalEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for fatal-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for fatal-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsFatalEnabled
+  	@return {Boolean}
+  */
+
+
+  logProvider.prototype.getIsFatalEnabled = function() {
+    return this.isEnabled(fm.logLevel.Fatal);
+  };
+
+  /*<span id='method-fm.logProvider-getIsInfoEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for info-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for info-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsInfoEnabled
+  	@return {Boolean}
+  */
+
+
+  logProvider.prototype.getIsInfoEnabled = function() {
+    return this.isEnabled(fm.logLevel.Info);
+  };
+
+  /*<span id='method-fm.logProvider-getIsWarnEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for warn-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for warn-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsWarnEnabled
+  	@return {Boolean}
+  */
+
+
+  logProvider.prototype.getIsWarnEnabled = function() {
+    return this.isEnabled(fm.logLevel.Warn);
+  };
+
+  /*<span id='method-fm.logProvider-getLevel'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets the log level.
+  	 </div>
+  
+  	@function getLevel
+  	@return {fm.logLevel}
+  */
+
+
+  logProvider.prototype.getLevel = function() {
+    return this._level;
+  };
+
+  /*<span id='method-fm.logProvider-info'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an info-level message.
+  	 </div>
+  	@function info
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.info = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      this._log(fm.logLevel.Info, message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      this._log(fm.logLevel.Info, message, ex);
+    }
+  };
+
+  /*<span id='method-fm.logProvider-infoFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an info-level message.
+  	 </div>
+  	@function infoFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.infoFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return this.info(fm.stringExtensions.format(format, args));
+  };
+
+  /*<span id='method-fm.logProvider-isEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Determines whether logging is enabled for the specified log level.
+  	 </div>
+  	@function isEnabled
+  	@param {fm.logLevel} level The log level.
+  	@return {Boolean} true if logging is enabled for the specified log level; otherwise, false.
+  */
+
+
+  logProvider.prototype.isEnabled = function() {
+    var level;
+    level = arguments[0];
+    return level >= this.getLevel();
+  };
+
+  /*<span id='method-fm.logProvider-log'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a message at the specified log level.
+  	 </div>
+  	@function log
+  	@param {fm.logLevel} level The log level.
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.log = function() {
+    var ex, level, message;
+    if (arguments.length === 3) {
+      level = arguments[0];
+      message = arguments[1];
+      ex = arguments[2];
+      return;
+    }
+    if (arguments.length === 2) {
+      level = arguments[0];
+      message = arguments[1];
+    }
+  };
+
+  /*<span id='method-fm.logProvider-setLevel'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Sets the log level.
+  	 </div>
+  
+  	@function setLevel
+  	@param {fm.logLevel} value
+  	@return {void}
+  */
+
+
+  logProvider.prototype.setLevel = function() {
+    var value;
+    value = arguments[0];
+    return this._level = value;
+  };
+
+  /*<span id='method-fm.logProvider-warn'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a warn-level message.
+  	 </div>
+  	@function warn
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.warn = function() {
+    var ex, message;
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      this._log(fm.logLevel.Warn, message, ex);
+      return;
+    }
+    if (arguments.length === 1) {
+      message = arguments[0];
+      this._log(fm.logLevel.Warn, message);
+    }
+  };
+
+  /*<span id='method-fm.logProvider-warnFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a warn-level message.
+  	 </div>
+  	@function warnFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  logProvider.prototype.warnFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return this.warn(fm.stringExtensions.format(format, args));
+  };
+
+  return logProvider;
+
+}).call(this, fm.object);
+
+/*<span id='cls-fm.log'>&nbsp;</span>
+*/
+
+/**
+@class fm.log
+ <div>
+ Log utility class.
+ </div>
+
+@extends fm.object
+*/
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+fm.log = (function(_super) {
+
+  __extends(log, _super);
+
+  /*<span id='prop--__provider'>&nbsp;</span>
+  */
+
+
+  /**
+  	@ignore {}
+  	@description
+  */
+
+
+  log.__provider = null;
+
+  /*<span id='prop--'>&nbsp;</span>
+  */
+
+
+  /**
+  	@ignore {}
+  	@description
+  */
+
+
+  function log() {
+    if (arguments.length === 1 && fm.util.isPlainObject(arguments[0]) && fm.util.canAttachProperties(this, arguments[0])) {
+      log.__super__.constructor.call(this);
+      fm.util.attachProperties(this, arguments[0]);
+      return;
+    }
+    log.__super__.constructor.call(this);
+  }
+
+  /*<span id='method-fm.log-debug'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a debug-level message.
+  	 </div>
+  	@function debug
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  log.debug = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      fm.log.getProvider().debug(message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      fm.log.getProvider().debug(message, ex);
+    }
+  };
+
+  /*<span id='method-fm.log-debugFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a debug-level message.
+  	 </div>
+  	@function debugFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  log.debugFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return fm.log.getProvider().debugFormat(format, args);
+  };
+
+  /*<span id='method-fm.log-error'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an error-level message.
+  	 </div>
+  	@function error
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  log.error = function() {
+    var ex, message;
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      fm.log.getProvider().error(message, ex);
+      return;
+    }
+    if (arguments.length === 1) {
+      message = arguments[0];
+      fm.log.getProvider().error(message);
+    }
+  };
+
+  /*<span id='method-fm.log-errorFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an error-level message.
+  	 </div>
+  	@function errorFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  log.errorFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return fm.log.getProvider().errorFormat(format, args);
+  };
+
+  /*<span id='method-fm.log-fatal'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a fatal-level message.
+  	 </div>
+  	@function fatal
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  log.fatal = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      fm.log.getProvider().fatal(message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      fm.log.getProvider().fatal(message, ex);
+    }
+  };
+
+  /*<span id='method-fm.log-fatalFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a fatal-level message.
+  	 </div>
+  	@function fatalFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  log.fatalFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return fm.log.getProvider().fatalFormat(format, args);
+  };
+
+  /*<span id='method-fm.log-getIsDebugEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for debug-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for debug-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsDebugEnabled
+  	@return {Boolean}
+  */
+
+
+  log.getIsDebugEnabled = function() {
+    return fm.log.getProvider().getIsDebugEnabled();
+  };
+
+  /*<span id='method-fm.log-getIsErrorEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for error-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for error-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsErrorEnabled
+  	@return {Boolean}
+  */
+
+
+  log.getIsErrorEnabled = function() {
+    return fm.log.getProvider().getIsErrorEnabled();
+  };
+
+  /*<span id='method-fm.log-getIsFatalEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for fatal-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for fatal-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsFatalEnabled
+  	@return {Boolean}
+  */
+
+
+  log.getIsFatalEnabled = function() {
+    return fm.log.getProvider().getIsFatalEnabled();
+  };
+
+  /*<span id='method-fm.log-getIsInfoEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for info-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for info-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsInfoEnabled
+  	@return {Boolean}
+  */
+
+
+  log.getIsInfoEnabled = function() {
+    return fm.log.getProvider().getIsInfoEnabled();
+  };
+
+  /*<span id='method-fm.log-getIsWarnEnabled'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets a value indicating whether logging is enabled for warn-level messages.
+  	 </div><value>
+  	 <c>true</c> if logging is enabled for warn-level messages; otherwise, <c>false</c>.
+  	 </value>
+  
+  	@function getIsWarnEnabled
+  	@return {Boolean}
+  */
+
+
+  log.getIsWarnEnabled = function() {
+    return fm.log.getProvider().getIsWarnEnabled();
+  };
+
+  /*<span id='method-fm.log-getProvider'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Gets the log provider to use.
+  	 </div>
+  
+  	@function getProvider
+  	@return {fm.logProvider}
+  */
+
+
+  log.getProvider = function() {
+    var _var0;
+    _var0 = fm.log.__provider;
+    if (_var0 === null || typeof _var0 === 'undefined') {
+      log.__provider = new fm.nullLogProvider();
+    }
+    return fm.log.__provider;
+  };
+
+  /*<span id='method-fm.log-info'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an info-level message.
+  	 </div>
+  	@function info
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  log.info = function() {
+    var ex, message;
+    if (arguments.length === 1) {
+      message = arguments[0];
+      fm.log.getProvider().info(message);
+      return;
+    }
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      fm.log.getProvider().info(message, ex);
+    }
+  };
+
+  /*<span id='method-fm.log-infoFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs an info-level message.
+  	 </div>
+  	@function infoFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  log.infoFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return fm.log.getProvider().infoFormat(format, args);
+  };
+
+  /*<span id='method-fm.log-setProvider'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Sets the log provider to use.
+  	 </div>
+  
+  	@function setProvider
+  	@param {fm.logProvider} value
+  	@return {void}
+  */
+
+
+  log.setProvider = function() {
+    var value, _var0;
+    value = arguments[0];
+    _var0 = value;
+    if (_var0 === null || typeof _var0 === 'undefined') {
+      value = new fm.nullLogProvider();
+    }
+    return log.__provider = value;
+  };
+
+  /*<span id='method-fm.log-warn'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a warn-level message.
+  	 </div>
+  	@function warn
+  	@param {String} message The message.
+  	@param {Error} ex The exception.
+  	@return {void}
+  */
+
+
+  log.warn = function() {
+    var ex, message;
+    if (arguments.length === 2) {
+      message = arguments[0];
+      ex = arguments[1];
+      fm.log.getProvider().warn(message, ex);
+      return;
+    }
+    if (arguments.length === 1) {
+      message = arguments[0];
+      fm.log.getProvider().warn(message);
+    }
+  };
+
+  /*<span id='method-fm.log-warnFormat'>&nbsp;</span>
+  */
+
+
+  /**
+  	 <div>
+  	 Logs a warn-level message.
+  	 </div>
+  	@function warnFormat
+  	@param {String} format A composite format string.
+  	@param {fm.array} args An array containing zero or more objects to format.
+  	@return {void}
+  */
+
+
+  log.warnFormat = function() {
+    var args, format;
+    format = arguments[0];
+    args = arguments[1];
+    return fm.log.getProvider().warnFormat(format, args);
+  };
+
+  return log;
+
+}).call(this, fm.object);
+
+
+
+fm.consoleLogProvider = (function(_super) {
+
+  __extends(consoleLogProvider, _super);
+
+  function consoleLogProvider(level) {
+    this.log = __bind(this.log, this);
+    consoleLogProvider.__super__.constructor.call(this);
+    if (!level) {
+      level = fm.logLevel.Warn;
+    }
+    this.setLevel(level);
+  }
+
+  consoleLogProvider.prototype.log = function(level, message, ex) {
+    var text;
+    text = fm.logProvider.getPrefix(level, true) + ' ' + message;
+    if (ex) {
+      text += '\n' + ex.message;
+    }
+    if (window.console && window.console.log) {
+      return window.console.log(text);
+    }
+  };
+
+  return consoleLogProvider;
+
+})(fm.logProvider);
+
+
+fm.log.setProvider(new fm.consoleLogProvider(fm.logLevel.Debug));
+
+var target, origin;
+var j = fm.json;
+var u = fm.util;
+var x = fm.xhr;
+u.observe(window, 'message', function(e) {
+    origin = e.origin;
+    if (origin == "null") {
+        origin = null;
+    }
+    if (e.data == 'ping') {
+        send('pong');
+        return;
+    }
+    var o = j.deserialize(e.data);
+    if (!o.headers) {
+        o.headers = { };
+    }
+    o.headers['X-FM-DomainName'] = origin;
+    u.extend(o, {
+        onFailure: function(e) {
+            u.extend(e, {
+                id: o.id,
+                type: 1
+            });
+            send(j.serialize(e));
+        },
+        onSuccess: function(e) {
+            u.extend(e, {
+                id: o.id,
+                type: 2
+            });
+            send(j.serialize(e));
+        },
+        onRequestCreated: function(request) {
+            send(j.serialize({
+                id: o.id,
+                type: 3
+            }));
+        },
+        onResponseReceived: function(response) {
+            send(j.serialize({
+                id: o.id,
+                type: 4
+            }));
+        }
+    });
+    x.send(o);
+});
+var send = function(data) {
+    if (!target) {
+        try {
+            target = parent.window;
+        } catch (err) { }
+        if (!target) {
+            target = parent;
+        }
+        if (!target) {
+            throw new Error('PostMessage fatality - cannot locate parent.');
+        }
+    }
+    target.postMessage(data, origin || '*');
+};
+</script>
+</head>
+<body>
+</body></html>

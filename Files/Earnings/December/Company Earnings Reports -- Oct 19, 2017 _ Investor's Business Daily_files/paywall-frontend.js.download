@@ -1,0 +1,8 @@
+(function($,InvestorsPaywallData){'use strict';var request=$.get({url:InvestorsPaywallData.api_url});request.done(function(response){if(response.error_message){$('.post-content').html('<h2>'+response.error_message+'</h2>');return;}
+if(response.content){$('.post-content').html(response.content);}else{$('.post-content').html('<div class="investors-paywall-excerpt">'+
+'<div class="investors-paywall-overlay"></div>'+
+response.paywall_excerpt+
+'</div>'+
+response.paywall_html);}
+if('data-table'===response.post_type){window.IBDMain.setDataTableInteractivity();}
+$(document).ready(function(){window.investorsLoadShortcodeVideo();});window.linkTickerSymbols();window.singlePostAdInjection();});request.fail(function(){$('.post-content').html('<h5>There was an issue loading the content. <br/>Please try reloading the page.</h5>');});})(jQuery,InvestorsPaywallData);

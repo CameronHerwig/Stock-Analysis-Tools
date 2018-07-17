@@ -1,0 +1,52 @@
+function createPixel(src){
+  var input = document.createElement('img');
+  input.setAttribute('src',src);
+  input.setAttribute('width', 1);
+  input.setAttribute('height', 1);
+  document.body.appendChild(input); 
+}
+function createScript(src){
+  var input = document.createElement('script');
+  input.setAttribute('src',src);
+  input.setAttribute('async', true);
+  input.setAttribute('type', "text/javascript");
+  document.body.appendChild(input); 
+}
+
+(function(d,c){var a=window,b=document,s="script",a=a[d]=a[d]||{};a.c={};a.c[c]={};a.c[c].d=[];a.c[c].d.push("init:"+(new Date).getTime());a=b.getElementsByTagName(s)[0];b=b.createElement(s);b.async=!0;b.src="//t.a3cloud.net/"+c+"/tag.js?ns="+d;a.parentNode.insertBefore(b,a)})("am","VE-141240");
+
+//apn ads - all accounts
+if(window.location.href.toLowerCase().indexOf("subscriptionordercomplete.aspx") >= 0 || window.location.href.toLowerCase().indexOf("confirmation.aspx") >= 0 || window.location.href.toLowerCase().indexOf("crosssellbilling.aspx") >= 0){
+    if(typeof digitalData.purchaseID != "undefined"){
+		var oN = digitalData.purchaseID; //order id
+    	var oV = document.cookie.replace(/(?:(?:^|.*;\s*)vePrice\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+		createPixel("//secure.adnxs.com/px?id=875465&seg=6701419&order_id="+oN+"&value="+oV+"&other=[USD]&t=2"); //APN Conv Pixel. Replace XXXXXX
+    	createPixel("//secure.adnxs.com/px?id=792547&seg=6701419&order_id="+oN+"&value="+oV+"&other=[USD]&t=2"); //APN Conv Pixel. Replace XXXXXX
+		createPixel("//secure.adnxs.com/px?id=779387&seg=6701419&order_id="+oN+"&value="+oV+"&other=[USD]&t=2"); //APN Conv Pixel. Replace XXXXXX
+	}
+}else if(window.location.href.toLowerCase().indexOf("investors.com/products/") >= 0){
+    createPixel("//secure.adnxs.com/seg?add=6701417&t=2"); //APN Prod Pixel. Replace XXXXXX
+}
+createPixel("//secure.adnxs.com/seg?add=6701418&t=2"); //APN ROS Pixel. Replace XXXXXX
+
+if( !!~window.location.href.indexOf('checkout/payment') || !!~window.location.href.indexOf('Products/OfferSelection') || !!~window.location.href.indexOf('checkout/Default')){
+    if( $('.subtotal b:last,.productPrice b:last').text() ){
+    	var d = new Date();
+    	d.setTime(d.getTime() + ( 3600 * 1000 ) );
+    	var expires = "expires=" + d.toGMTString();
+    	document.cookie = "vePrice=" + $('.subtotal b:last,.productPrice b:last').text().match(/[0-9.,]+/)[0].replace(",","")  + ";expires=" + expires + ";path=/";
+	}
+}
+
+if(window.location.href.toLowerCase().indexOf("subscriptionordercomplete.aspx") >= 0 || window.location.href.toLowerCase().indexOf("confirmation.aspx") >= 0 || window.location.href.toLowerCase().indexOf("crosssellbilling.aspx") >= 0){
+	if(typeof digitalData.purchaseID != "undefined"){
+		AddShoppersConversion = {
+        	order_id: digitalData.purchaseID,
+        	value: document.cookie.replace(/(?:(?:^|.*;\s*)vePrice\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+
+		};
+	}
+}
+var js = document.createElement('script'); js.type = 'text/javascript'; js.async = true; js.id = 'AddShoppers';
+js.src = ('https:' == document.location.protocol ? 'https://shop.pe/widget/' : 'http://cdn.shop.pe/widget/') + 'widget_async.js#595cedb7bbddbd4489f89a72';
+document.getElementsByTagName("head")[0].appendChild(js);           

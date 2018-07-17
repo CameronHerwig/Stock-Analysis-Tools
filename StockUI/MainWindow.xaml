@@ -1,14 +1,21 @@
 ﻿<Window x:Class="StockUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Stock Data" Height="450" Width="500" Margin="10,0,10,10">
+    Title="Stock Data" Height="475" Width="500" Margin="10,0,10,10">
     <StackPanel HorizontalAlignment="Stretch" Height="Auto" Margin="25,25,0,0" VerticalAlignment="Stretch" Width="Auto">
         <DataGrid Name="Data"  Height="244" Margin="0,0,136,20" RenderTransformOrigin="0.5,0.5"/>
-        <Button HorizontalAlignment="Right" Content="Extract From HTML" Margin="0,0,20,0" Height="20" Width="150" Click="Button_Click"/>
-        <Button HorizontalAlignment="Right" Content="Add Fundmentals" Margin="0,10,20,0" Height="20" Width="150" Click="Button_Click_1"/>
+        <Button HorizontalAlignment="Right" Content="Extract From HTML" Margin="0,0,20,0" Height="20" Width="150" Click="ExtractHTML"/>
+        <Button HorizontalAlignment="Right" Content="Add Fundmentals" Margin="0,10,20,0" Height="20" Width="150" Click="AddFundamentals"/>
+        <Button HorizontalAlignment="Right" Content="Gather Fundmentals" Margin="0,10,20,0" Height="20" Width="150" Click="GatherFundamentals"/>
         <Label Content="Select Month:" Margin="0,0,379,0"/>
         <ComboBox Margin="0,0,321,0" Name="SelectMonth" SelectionChanged="SelectMonth_SelectionChanged">
-            <ComboBoxItem Content="Janurary" HorizontalAlignment="Left" Width="144" Selected="ComboBoxItem_Selected"/>
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
         </ComboBox>
     </StackPanel>
 </Window>

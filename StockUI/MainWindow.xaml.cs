@@ -15,9 +15,10 @@ namespace StockUI
         public MainWindow()
         {
             InitializeComponent();
+            SelectMonth.ItemsSource = stock.GetMonths();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ExtractHTML(object sender, RoutedEventArgs e)
         {
             if(month != null)
             {
@@ -27,7 +28,7 @@ namespace StockUI
             }           
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void AddFundamentals(object sender, RoutedEventArgs e)
         {
             
             if (month != null)
@@ -39,15 +40,19 @@ namespace StockUI
             }          
         }
 
-        private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void GatherFundamentals(object sender, RoutedEventArgs e)
         {
-            month = ((ComboBoxItem)SelectMonth.SelectedItem).Content.ToString();
-            Title = month; //for debugging purposes
+            if (month != null)
+            {
+                var stockData = stock.GatherFundamentals(month);
+            }
         }
 
-        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e)
+        private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //This is here so the compiler doesnt yell at me
+            month = SelectMonth.SelectedItem.ToString();
+            Title = month; //for debugging purposes
         }
+        
     }
 }

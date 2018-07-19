@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stock_Data
 {
-    public interface IStockData
+    public interface IStockData 
     {
         string Symbol { get; set; }     
         double Price { get; set; }

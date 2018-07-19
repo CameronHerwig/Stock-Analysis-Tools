@@ -8,3 +8,6 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgili
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.pdb
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.xml
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.csproj.CopyComplete
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\RestSharp.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\Newtonsoft.Json.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\Newtonsoft.Json.xml

@@ -18,3 +18,6 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.csp
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\HtmlAgilityPack.dll
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\HtmlAgilityPack.pdb
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\HtmlAgilityPack.xml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\RestSharp.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\Newtonsoft.Json.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\Newtonsoft.Json.xml

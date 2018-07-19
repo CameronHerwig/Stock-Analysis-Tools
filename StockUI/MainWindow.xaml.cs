@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using Stock_Data;
 
@@ -24,19 +25,18 @@ namespace StockUI
             {
                 var stockData = stock.RetrieveHTML(month); //sends month to get HTMl data
                 Data.ItemsSource = stockData;
-                this.SizeToContent = SizeToContent.Width; //fixes poor sizing
+                SizeToContent = SizeToContent.Width; //fixes poor sizing
             }           
         }
 
         private void AddFundamentals(object sender, RoutedEventArgs e)
-        {
-            
+        {   
             if (month != null)
             {
                 var stockData = stock.RetrieveFundamentals(month); //sends month and adds fundamental data
                 Data.ItemsSource = null; 
                 Data.ItemsSource = stockData; //along with null set will refresh data
-                this.SizeToContent = SizeToContent.Width; //fixes poor sizing
+                SizeToContent = SizeToContent.Width; //fixes poor sizing
             }          
         }
 

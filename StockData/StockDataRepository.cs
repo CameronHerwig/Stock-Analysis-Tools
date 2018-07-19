@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RestSharp;
+using RestSharp.Authenticators;
+using StockData;
 
 namespace Stock_Data
 {
@@ -80,9 +83,10 @@ namespace Stock_Data
 
         public List<IStockData> GatherFundamentals(string month)
         {
+            var fundamentals = new FundamentalRepository();
             string[] fileArray = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Fundamentals", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
 
-            if (fileArray != null)
+            if (fileArray == null)
             {
                 return RetrieveFundamentals(month);
             }
@@ -92,7 +96,22 @@ namespace Stock_Data
 
                 foreach(var stock in stockData)
                 {
-
+                    System.Threading.Thread.Sleep(15000);
+                    var price = fundamentals.GetPrice(stock.Symbol, month);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.ADX = fundamentals.GetADX(stock.Symbol, month);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month);
+                    System.Threading.Thread.Sleep(15000);
+                    stock.Gain = fundamentals.GetGain(stock.Symbol, month);
                 }
 
                 return null;

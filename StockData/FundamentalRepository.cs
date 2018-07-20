@@ -4,32 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace Stock_Data
 {
     public class FundamentalRepository
     {
         Dates dateClass = new Dates();
-        readonly int delay = 15000;
+        private readonly int delay = 15000;
+        RestClient client = new RestClient("https://www.alphavantage.co/");
+        private readonly string apiKey = "CP85DS06PVNPIF7X";
 
         public double GetADX(string symbol, string month)
-        {
-            System.Threading.Thread.Sleep(delay);
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=ADX&symbol={symbol}&interval=weekly&time_period=10&apikey=CP85DS06PVNPIF7X");           
-            var returned = client.Execute(request);
-           
-            JObject json = JObject.Parse(returned.Content);
-            var date = dateClass.GetDate("ADX", month);
+        {          
+            var request = new RestRequest($"query?function=ADX&symbol={symbol}&interval=weekly&time_period=10&apikey={apiKey}");
 
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
+            JObject json = GetJObject(request);
+
+            var date = dateClass.GetDate("ADX", month);
 
             var search = json["Technical Analysis: ADX"][date]["ADX"];
             if(search == null)
@@ -44,22 +36,11 @@ namespace Stock_Data
 
         public double GetBBANDS(string symbol, string month, double price)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=BBANDS&symbol={symbol}&interval=weekly&time_period=5&series_type=close&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=BBANDS&symbol={symbol}&interval=weekly&time_period=5&series_type=close&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
+            JObject json = GetJObject(request);
+
             var date = dateClass.GetDate("BBANDS", month);
-
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
 
             var search = json["Technical Analysis: BBANDS"][date]["Real Upper Band"];
             if (search == null)
@@ -74,22 +55,12 @@ namespace Stock_Data
 
         public double GetBOP(string symbol, string month)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=BOP&symbol={symbol}&interval=monthly&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=BOP&symbol={symbol}&interval=monthly&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
+            JObject json = GetJObject(request);
+
             var date = dateClass.GetDate("BOP", month);
 
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
             var search = json["Technical Analysis: BOP"][date]["BOP"];
             if (search == null)
             {
@@ -103,22 +74,11 @@ namespace Stock_Data
 
         public double GetMACD(string symbol, string month)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=MACD&symbol={symbol}&interval=daily&series_type=open&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=MACD&symbol={symbol}&interval=daily&series_type=open&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
+            JObject json = GetJObject(request);
+
             var date = dateClass.GetDate("MACD", month);
-
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
 
             var search = json["Technical Analysis: MACD"][date]["MACD"];
             if (search == null)
@@ -133,34 +93,23 @@ namespace Stock_Data
 
         public double GetMOM(string symbol, string month, double price)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=MOM&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=MOM&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
-            var date = dateClass.GetDate("MOM", month);          
+            JObject json = GetJObject(request);
 
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
+            var date = dateClass.GetDate("MOM", month);
 
-            var search = json["Technical Analysis: MOM"][date[0]]["MOM"];
+            var search = json["Technical Analysis: MOM"][date[4]]["MOM"];
             if (search == null)
             {
                 return 0;
             }
 
-            var mom1 = (double)search;
+            var mom1 = (double)json["Technical Analysis: MOM"][date[0]]["MOM"];
             var mom2 = (double)json["Technical Analysis: MOM"][date[1]]["MOM"];
             var mom3 = (double)json["Technical Analysis: MOM"][date[2]]["MOM"];
             var mom4 = (double)json["Technical Analysis: MOM"][date[3]]["MOM"];
-            var mom5 = (double)json["Technical Analysis: MOM"][date[4]]["MOM"];
+            var mom5 = (double)search;
 
             var MOM = ((mom1 + mom2 + mom3 + mom4 + mom5)/(5*price));
 
@@ -169,22 +118,11 @@ namespace Stock_Data
 
         public double GetRSI(string symbol, string month)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=RSI&symbol={symbol}&interval=weekly&time_period=10&series_type=close&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=RSI&symbol={symbol}&interval=weekly&time_period=10&series_type=close&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
+            JObject json = GetJObject(request);
+
             var date = dateClass.GetDate("RSI", month);
-
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
 
             var search = json["Technical Analysis: RSI"][date]["RSI"];
             if (search == null)
@@ -199,22 +137,11 @@ namespace Stock_Data
 
         public double GetGain(string symbol, string month)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey=CP85DS06PVNPIF7X");
-            System.Threading.Thread.Sleep(delay);
-            var returned = client.Execute(request);
+            var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apiKey}");
 
-            JObject json = JObject.Parse(returned.Content);
+            JObject json = GetJObject(request);
+
             var date = dateClass.GetDate("Gain", month);
-
-            var info = (string)json["Information"];
-            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
-            {
-                System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
-            }
 
             var search = json["Time Series (Daily)"][date[0]]["2. high"];
             if (search == null)
@@ -230,16 +157,41 @@ namespace Stock_Data
 
         public double GetPrice(string symbol, string month)
         {
-            var client = new RestClient("https://www.alphavantage.co/");
-            var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey=CP85DS06PVNPIF7X");
+            var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apiKey}");
+
+            JObject json = GetJObject(request);
+
+            var date = dateClass.GetDate("Price", month);
+            double price;
+
+            try
+            {
+                var search = json["Time Series (Daily)"][date]["4. close"];
+                if (search == null)
+                {
+                    return 0;
+                }
+
+                price = (double)search;
+            }
+            catch(Exception Ex)
+            {
+                MessageBox.Show(Ex.Message, "GetPrice Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                price = 0;
+            }
+
+            return price;
+        }
+
+        private JObject GetJObject(RestRequest request)
+        {
             System.Threading.Thread.Sleep(delay);
             var returned = client.Execute(request);
 
             JObject json = JObject.Parse(returned.Content);
-            var date = dateClass.GetDate("Price", month);
 
             var info = (string)json["Information"];
-            while(info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
+            while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
             {
                 System.Threading.Thread.Sleep(delay);
                 returned = client.Execute(request);
@@ -247,15 +199,7 @@ namespace Stock_Data
                 info = (string)json["Information"];
             }
 
-            var search = json["Time Series (Daily)"][date]["4. close"];
-            if (search == null)
-            {
-                return 0;
-            }
-
-            var price = (double)search;
-
-            return price;
+            return json;
         }
 
         public void SaveFundamentals(List<IFundamental> fundamentalData, string month)

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock_Data", "StockData\Sto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockUI", "StockUI\StockUI.csproj", "{A274974E-3FA8-4D56-8D4B-E99B497D2DC2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock_Data_Tests", "Stock_Data_Tests\Stock_Data_Tests.csproj", "{C0C17829-11EE-48A7-991A-D98125BED904}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A274974E-3FA8-4D56-8D4B-E99B497D2DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A274974E-3FA8-4D56-8D4B-E99B497D2DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A274974E-3FA8-4D56-8D4B-E99B497D2DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C17829-11EE-48A7-991A-D98125BED904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C17829-11EE-48A7-991A-D98125BED904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C17829-11EE-48A7-991A-D98125BED904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C17829-11EE-48A7-991A-D98125BED904}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

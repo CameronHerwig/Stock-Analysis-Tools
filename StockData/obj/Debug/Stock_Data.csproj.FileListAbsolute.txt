@@ -1,0 +1,13 @@
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\StockData.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\StockData.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\Newtonsoft.Json.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\RestSharp.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\HtmlAgilityPack.xml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\Newtonsoft.Json.xml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\Stock_Data.csprojAssemblyReference.cache
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\Stock_Data.csproj.CoreCompileInputs.cache
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\Stock_Data.csproj.CopyComplete
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.dll
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.pdb

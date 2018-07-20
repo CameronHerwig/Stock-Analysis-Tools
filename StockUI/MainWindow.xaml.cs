@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Stock_Data;
 using System.Windows;
 using System.Windows.Controls;
-using Stock_Data;
 
 namespace StockUI
 {
@@ -44,7 +43,10 @@ namespace StockUI
         {
             if (month != null)
             {
-                var stockData = stock.GatherFundamentals(month);
+                var stockData = stock.GatherFundamentals(month); //sends month and gathers fundamental data
+                Data.ItemsSource = null;
+                Data.ItemsSource = stockData; //along with null set will refresh data
+                SizeToContent = SizeToContent.Width; //fixes poor sizing
             }
         }
 

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace StockData
+namespace Stock_Data
 {
     public class Dates
     {
-        private Dictionary<string, string> ADX = new Dictionary<string, string>
+        private readonly Dictionary<string, string> ADX = new Dictionary<string, string>
         {
             {"August17", "2017-07-28"},
             {"September17", "2017-09-01"},
@@ -18,7 +14,7 @@ namespace StockData
             {"Janurary18", "2017-12-29" },
             {"Feburary18", "2018-02-02" }
         };
-        private Dictionary<string, string> BBANDS = new Dictionary<string, string>
+        private readonly Dictionary<string, string> BBANDS = new Dictionary<string, string>
         {
             {"August17", "2017-07-28"},
             {"September17", "2017-09-01"},
@@ -29,7 +25,7 @@ namespace StockData
             {"Feburary18", "2018-02-02" }
         };
 
-        private Dictionary<string, string> BOP = new Dictionary<string, string>
+        private readonly Dictionary<string, string> BOP = new Dictionary<string, string>
         {
             {"August17", "2017-07-31"},
             {"September17", "2017-08-31"},
@@ -39,7 +35,7 @@ namespace StockData
             {"Janurary18", "2017-12-29" },
             {"Feburary18", "2017-01-31" }
         };
-        private Dictionary<string, List<string>> MOM = new Dictionary<string, List<string>>
+        private readonly Dictionary<string, List<string>> MOM = new Dictionary<string, List<string>>
         {
             {"August17", new List<string>{"2017-07-24", "2017-07-25", "2017-07-26", "2017-07-27", "2017-07-28"}},
             {"September17", new List<string>{"2017-08-28", "2017-08-29", "2017-08-30", "2017-08-31", "2017-09-01"}},
@@ -49,7 +45,7 @@ namespace StockData
             {"Janurary18", new List<string>{ "2017-12-26", "2017-12-27", "2017-12-28", "2017-12-29", "2017-01-02"}},
             {"Feburary18", new List<string>{ "2018-01-29", "2018-01-30", "2018-01-31", "2018-02-01", "2018-02-02"}},
         };
-        private Dictionary<string, string> MACD = new Dictionary<string, string>
+        private readonly Dictionary<string, string> MACD = new Dictionary<string, string>
         {
             {"August17", "2017-07-31"},
             {"September17", "2017-08-31"},
@@ -59,7 +55,7 @@ namespace StockData
             {"Janurary18", "2017-12-29"},
             {"Feburary18", "2018-01-31"},
         };
-        private Dictionary<string, string> RSI = new Dictionary<string, string>
+        private readonly Dictionary<string, string> RSI = new Dictionary<string, string>
         {
             {"August17", "2017-07-28"},
             {"September17", "2017-09-01"},
@@ -69,7 +65,7 @@ namespace StockData
             {"Janurary18", "2017-12-29" },
             {"Feburary18", "2018-02-02" }
         };
-        private Dictionary<string, string> Price = new Dictionary<string, string>
+        private readonly Dictionary<string, string> Price = new Dictionary<string, string>
         {
             {"August17", "2017-07-28"},
             {"September17", "2017-09-01"},
@@ -79,7 +75,7 @@ namespace StockData
             {"Janurary18", "2017-12-29" },
             {"Feburary18", "2018-02-02" }
         };
-        private Dictionary<string, List<string>> Gain = new Dictionary<string, List<string>>
+        private readonly Dictionary<string, List<string>> Gain = new Dictionary<string, List<string>>
         {
             {"August17", new List<string>{"2017-08-01", "2017-08-31"}},
             {"September17", new List<string>{ "2017-09-01", "2017-09-29"}},

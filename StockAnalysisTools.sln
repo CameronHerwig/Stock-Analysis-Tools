@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockData", "StockData\StockData.csproj", "{99D7EA48-4FFB-4ACF-9AA9-C56F52266C78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock_Data", "StockData\Stock_Data.csproj", "{99D7EA48-4FFB-4ACF-9AA9-C56F52266C78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockUI", "StockUI\StockUI.csproj", "{A274974E-3FA8-4D56-8D4B-E99B497D2DC2}"
 EndProject

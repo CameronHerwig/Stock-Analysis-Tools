@@ -102,9 +102,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StockData\StockData.csproj">
+    <ProjectReference Include="..\StockData\Stock_Data.csproj">
       <Project>{99d7ea48-4ffb-4acf-9aa9-c56f52266c78}</Project>
-      <Name>StockData</Name>
+      <Name>Stock_Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

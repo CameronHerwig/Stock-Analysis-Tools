@@ -1,14 +1,8 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RestSharp;
-using RestSharp.Authenticators;
-using StockData;
 
 namespace Stock_Data
 {
@@ -84,6 +78,7 @@ namespace Stock_Data
         public List<IStockData> GatherFundamentals(string month)
         {
             var fundamentals = new FundamentalRepository();
+            var fundList = new List<IFundamental>();
             string[] fileArray = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Fundamentals", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
 
             if (fileArray == null)
@@ -95,26 +90,35 @@ namespace Stock_Data
                 var stockData = _stockData;
 
                 foreach(var stock in stockData)
-                {
-                    System.Threading.Thread.Sleep(15000);
+                {                    
                     var price = fundamentals.GetPrice(stock.Symbol, month);
-                    System.Threading.Thread.Sleep(15000);
                     stock.ADX = fundamentals.GetADX(stock.Symbol, month);
-                    System.Threading.Thread.Sleep(15000);
                     stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price);
-                    System.Threading.Thread.Sleep(15000);
                     stock.BOP = fundamentals.GetBOP(stock.Symbol, month);
-                    System.Threading.Thread.Sleep(15000);
                     stock.MACD = fundamentals.GetMACD(stock.Symbol, month);
-                    System.Threading.Thread.Sleep(15000);
                     stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price);
-                    System.Threading.Thread.Sleep(15000);
                     stock.RSI = fundamentals.GetRSI(stock.Symbol, month);
-                    System.Threading.Thread.Sleep(15000);
                     stock.Gain = fundamentals.GetGain(stock.Symbol, month);
+
+                    fundList.Add(new Fundamental()
+                    {
+                        Symbol = stock.Symbol,
+                        ADX = stock.ADX,
+                        BBANDS = stock.BBANDS,
+                        BOP = stock.BOP ,
+                        MACD = stock.MACD,
+                        MOM = stock.MOM,
+                        RSI = stock.RSI,
+                        Gain = stock.Gain
+                    });
                 }
 
-                return null;
+                _stockData.RemoveAll(symbol => symbol.ADX == 0);
+                fundList.RemoveAll(symbol => symbol.ADX == 0);
+
+                fundamentals.SaveFundamentals(fundList,month);
+
+                return _stockData;
             }
         }
 

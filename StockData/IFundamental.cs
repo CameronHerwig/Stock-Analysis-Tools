@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StockData
+﻿namespace Stock_Data
 {
     public interface IFundamental
     {
+        string Symbol { get; set; }
         double ADX { get; set; }
         double BBANDS { get; set; }
         double BOP { get; set; }
@@ -17,3 +12,4 @@ namespace StockData
         double Gain { get; set; }
     }
 }
+

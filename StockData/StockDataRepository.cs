@@ -81,7 +81,7 @@ namespace Stock_Data
             var fundList = new List<IFundamental>();
             string[] fileArray = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Fundamentals", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
 
-            if (fileArray == null)
+            if (fileArray.Length != 0)
             {
                 return RetrieveFundamentals(month);
             }
@@ -120,6 +120,60 @@ namespace Stock_Data
 
                 return _stockData;
             }
+        }
+
+        public List<IComparisonResult> GetComparisons(string month)
+        {
+
+            string[] fileArray = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Results", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
+            var fundamentals = new FundamentalChooser();
+
+            if (fileArray.Length != 0)
+            {
+                return fundamentals.RetrieveComparisons(month);
+            }
+            else
+            {
+                var set = new List<string>
+                {
+                "ADX","BBANDS","BOP","MACD","MOM","RSI"
+                };
+                var subSets = fundamentals.SubSetsOf(set).Distinct().ToList();
+
+                var stockData = _stockData;
+
+                foreach (var symbol in stockData)
+                {
+                    foreach (var fundSet in subSets)
+                    {
+                        fundamentals.BuildComparison((StockData)symbol, fundSet.ToList());
+                    }
+                }
+
+                var comparisonResults = fundamentals.successRate;
+                comparisonResults["Default"] = comparisonResults[""];
+                comparisonResults.Remove("");
+
+                var totalResult = new List<IComparisonResult>();
+
+                foreach (var result in comparisonResults)
+                {
+                    double success = result.Value["Success"];
+                    double total = result.Value["Total"];
+                    double successPercent = success / total;
+                    totalResult.Add(new ComparisonResult
+                    {
+                        TestName = result.Key,
+                        SuccessPercent = Math.Round(successPercent, 4),
+                        Total = total,
+                        Success = success
+                    });
+                }
+
+                fundamentals.SaveComparisons(totalResult, month);
+
+                return totalResult;
+            }            
         }
 
         public List<string> GetMonths()

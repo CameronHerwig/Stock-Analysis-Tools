@@ -51,9 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparisonResult.cs" />
     <Compile Include="Dates.cs" />
     <Compile Include="FundamentalRepository.cs" />
     <Compile Include="Fundamental.cs" />
+    <Compile Include="FundamentalChooser.cs" />
+    <Compile Include="IComparisonResult.cs" />
     <Compile Include="IFundamental.cs" />
     <Compile Include="IStockData.cs" />
     <Compile Include="StockData.cs" />

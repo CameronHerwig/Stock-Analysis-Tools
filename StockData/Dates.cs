@@ -87,7 +87,7 @@ namespace Stock_Data
         };
 
 
-        public dynamic GetDate(string fundamental, string month)
+        public dynamic GetDate(string fundamental, string month) //Returns the correct date for the month and fundamental passed in
         {
             switch (fundamental)
             {

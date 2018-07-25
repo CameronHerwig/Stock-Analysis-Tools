@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Stock_Data
 {
@@ -133,7 +135,7 @@ namespace Stock_Data
             }
             else
             {
-                if (stock.Gain > 1.00)
+                if (stock.Gain > double.Parse(ConfigurationManager.AppSettings["MinimumGain"]))
                 {
                     AddToSucess(stock, finishedList, 1);
                 }
@@ -195,7 +197,7 @@ namespace Stock_Data
 
         public List<IComparisonResult> RetrieveComparisons(string month)
         {
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
+            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
 
             if (fileArray != null)
             {
@@ -217,20 +219,15 @@ namespace Stock_Data
                 }
 
                 return comparisonList;
-            }
-            else
-            {
-                return null;
-            }
+            }           
+             return null;
         }
 
-        public Dictionary<string,Dictionary<string,double>> RetrieveAllComparisons()
+        public List<ITestResults> RetrieveAllComparisons()
         {
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", "*.csv", SearchOption.AllDirectories); //gets months fundamentals
+            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
 
-
-            var testResults = new List<TestResults>();
-            var testList = new Dictionary<string, Dictionary<string,double>>();
+            var testList = new Dictionary<string, ITestResults>();
 
             foreach (string file in fileArray)
             {
@@ -241,20 +238,99 @@ namespace Stock_Data
                 {
                     if(testList.ContainsKey(test[0]))
                     {
-                        testList[test[0]].Add(month,double.Parse(test[1]));
+                        switch(month)
+                        {
+                            case "September17.csv" :
+                                testList[test[0]].September17 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                            case "October17.csv":
+                                testList[test[0]].October17 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                            case "November17.csv":
+                                testList[test[0]].November17 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                            case "December17.csv":
+                                testList[test[0]].December17 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                            case "Janurary18.csv":
+                                testList[test[0]].Janurary18 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                            case "Feburary18.csv":
+                                testList[test[0]].Feburary18 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
+                        }                       
                     }
                     else
-                    {
-                        testList.Add(test[0], new Dictionary<string, double>
+                    {                       
+                        switch (month)
                         {
-                            { month, double.Parse(test[1]) }
-                        });
+                            case "September17.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], September17 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                            case "October17.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], October17  = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                            case "November17.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], November17 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                            case "December17.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], December17 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                            case "Janurary18.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], Janurary18 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                            case "Feburary18.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], Feburary18 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
+                                break;
+                        }
                     }
                 }
             }         
 
-            return testList;
+            foreach(var test in testList)
+            {
+                test.Value.Average = Math.Round(((test.Value.September17 +
+                    test.Value.October17 +
+                    test.Value.November17 +
+                    test.Value.December17 +
+                    test.Value.Janurary18 +
+                    test.Value.Feburary18) / fileArray.Length),4);
+                test.Value.AverageSymbols = Math.Round((test.Value.AverageSymbols / fileArray.Length), 2);
+            }
 
+            var returnList = testList.Values.ToList();
+
+            SaveAllComparisons(returnList);
+
+            return returnList;
+
+        }
+
+        public void SaveAllComparisons(List<ITestResults> testData)
+        {
+            var headers = "Test Name, September17, October17, November17, December17, Janurary18, Feburary18, Average%, Average Symbols"; //sets header string
+            var path = $@"..\..\..\Files\Results\Combined\Combined.csv";
+            try
+            {
+                using (var file = File.CreateText(path))
+                {
+                    file.WriteLine(headers); //writes headers
+                    foreach (var test in testData) //writes whole list
+                    {
+                        file.WriteLine(string.Join(",", test.TestName, test.September17, test.October17, test.November17, test.December17, test.Janurary18, test.Feburary18, test.Average, test.AverageSymbols));
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Combined Data File Must Be Closed!", "Stock_Data:FundamentalChooser:SaveAllComparisons", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }           
         }
     }
 }

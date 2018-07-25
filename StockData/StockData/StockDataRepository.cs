@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace Stock_Data
                     {
                         var growth = double.Parse(symbol[3]) / double.Parse(symbol[5]); //gets current and last years earnings
                         var price = double.Parse(symbol[2]);
-                        if (growth > 1.35 && price > 5) //35% growth and price > $5
+                        if (growth > double.Parse(ConfigurationManager.AppSettings["MinimumGrowth"]) && price > int.Parse(ConfigurationManager.AppSettings["MinimumPrice"])) //35% growth and price > $5
                         {
                             stockList.Add(new StockData  //adds current info
                             {
@@ -125,7 +126,7 @@ namespace Stock_Data
         public List<IComparisonResult> GetComparisons(string month)
         {
 
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
+            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
             var fundamentals = new FundamentalChooser();
 
             if (fileArray.Length != 0)

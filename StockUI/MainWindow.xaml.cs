@@ -1,4 +1,5 @@
 ﻿using Stock_Data;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -73,6 +74,14 @@ namespace StockUI
                 Data.ItemsSource = stockData; //along with null set will refresh data
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
             }
+        }
+
+        private void GetComparisons(object sender, RoutedEventArgs e)
+        {
+            var fundChooser = new FundamentalChooser();
+            var testData = fundChooser.RetrieveAllComparisons();
+            Data1.ItemsSource = testData;
+            SizeToContent = SizeToContent.Width; //fixes poor sizing
         }
     }
 }

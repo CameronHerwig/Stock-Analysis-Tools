@@ -11,18 +11,15 @@ namespace Stock_Data
     {
         private List<IStockData> _stockData;
 
+        readonly double minimumGrowth = double.Parse(ConfigurationManager.AppSettings["MinimumGrowth"]);
+        readonly int minimumPrice = int.Parse(ConfigurationManager.AppSettings["MinimumPrice"]);
+        readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
+
         public List<IStockData> RetrieveHTML(string month)
         {
 
             var path = $"..\\..\\..\\Files\\Earnings\\{month}\\"; //uses interpolation to gather month specific data
             string[] foundArray = Directory.GetFiles(path, "*.html"); //grab html files
-
-            //string[] excludeSM = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Earnings", "*sm.21.html", SearchOption.AllDirectories); //sm.21 is included in DLs and is a dead file
-            //string[] excludeSA = Directory.GetFiles(@"C:\Users\cherw\Desktop\Github\Stock Analysis Tools\Files\Earnings", "*smartads.html", SearchOption.AllDirectories); //smartads is included in DLs and is a dead file
-            //var excludeArray = excludeSM.Concat(excludeSA)
-            //             .Where(x => !string.IsNullOrEmpty(x)) //probably
-            //             .ToArray();
-            //string[] fileArray = foundArray.Except(excludeArray).ToArray(); //filter
 
             string[] fileArray = foundArray; //placeholder if excludes needed later
 
@@ -45,9 +42,7 @@ namespace Stock_Data
                                 .Where(tr => tr.Elements("td").Count() > 1)
                                 .Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
                                 .ToList());
-                }
-
-                
+                }                
 
                 foreach (var file in tables)
                 {
@@ -55,7 +50,7 @@ namespace Stock_Data
                     {
                         var growth = double.Parse(symbol[3]) / double.Parse(symbol[5]); //gets current and last years earnings
                         var price = double.Parse(symbol[2]);
-                        if (growth > double.Parse(ConfigurationManager.AppSettings["MinimumGrowth"]) && price > int.Parse(ConfigurationManager.AppSettings["MinimumPrice"])) //35% growth and price > $5
+                        if (growth > minimumGrowth && price > minimumPrice) //35% growth and price > $5
                         {
                             stockList.Add(new StockData  //adds current info
                             {
@@ -123,10 +118,59 @@ namespace Stock_Data
             }
         }
 
+        public List<IFutureData> GatherFutureFundamentals(string month)
+        {
+            var fundamentals = new FundamentalRepository();
+            var fundList = new List<IFutureData>();
+            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\FutureFundamentals\", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
+
+            if (fileArray.Length != 0)
+            {
+                return RetrieveFutureFundamentals(month);
+            }
+            else
+            {
+                var stockData = RetrieveHTML(month);
+
+                foreach (var stock in stockData)
+                {
+                    var price = fundamentals.GetPrice(stock.Symbol, month);
+                    stock.ADX = fundamentals.GetADX(stock.Symbol, month);
+                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price);
+                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month);
+                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month);
+                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price);
+                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month);
+
+                    fundList.Add(new FutureData()
+                    {
+                        Symbol = stock.Symbol,
+                        Price = price,
+                        EarningsGrowth = stock.EarningsGrowth,
+                        ADX = stock.ADX,
+                        BBANDS = stock.BBANDS,
+                        BOP = stock.BOP,
+                        MACD = stock.MACD,
+                        MOM = stock.MOM,
+                        RSI = stock.RSI,                
+                        ForwardPE = stock.ForwardPE
+                    });
+                }
+
+              _stockData.RemoveAll(symbol => symbol.ADX == 0);
+                fundList.RemoveAll(symbol => symbol.ADX == 0);
+                fundList.RemoveAll(symbol => symbol.MOM == 0);
+
+                fundamentals.SaveFutureFundamentals(fundList, month);
+
+                return fundList;
+            }
+        }
+
         public List<IComparisonResult> GetComparisons(string month)
         {
-
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
+            DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
+            string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
             var fundamentals = new FundamentalChooser();
 
             if (fileArray.Length != 0)
@@ -230,6 +274,67 @@ namespace Stock_Data
             }
 
             return _stockData;
+        }
+
+        public List<IFutureData> RetrieveFutureFundamentals(string month)
+        {
+            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\FutureFundamentals\", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
+            var fundList = new List<IFutureData>();
+
+            if (fileArray != null)
+            {
+                var fundamentalList = new Dictionary<string, List<string>>(); //main dictionary
+
+                foreach (string file in fileArray)
+                {
+                    var fundamentals = File.ReadLines(file).Select(line => line.Split(',')).ToDictionary(line => line[0], line => new List<string> //grabs csv lines and makes dictionary indexed at symbol
+                {
+                    line[1],
+                    line[2],
+                    line[3],
+                    line[4],
+                    line[5],
+                    line[6],
+                    line[7],
+                });
+                    fundamentals.Remove("Symbol"); //removes header line
+                    fundamentalList = fundamentalList.Concat(fundamentals).ToDictionary(x => x.Key, x => x.Value); //combines main and current dictionary
+                }
+
+                var stockData = RetrieveHTML(month);
+
+                foreach (var symbol in stockData.ToList())
+                {
+                    if (fundamentalList.ContainsKey(symbol.Symbol)) //sets found symbol's data into object fields
+                    {
+                        symbol.Price = symbol.ADX = double.Parse(fundamentalList[symbol.Symbol][0]);
+                        symbol.ADX = Math.Round(double.Parse(fundamentalList[symbol.Symbol][1]), 4);
+                        symbol.BBANDS = Math.Round(double.Parse(fundamentalList[symbol.Symbol][2]), 4);
+                        symbol.BOP = Math.Round(double.Parse(fundamentalList[symbol.Symbol][3]), 4);
+                        symbol.MACD = Math.Round(double.Parse(fundamentalList[symbol.Symbol][4]), 4);
+                        symbol.MOM = Math.Round(double.Parse(fundamentalList[symbol.Symbol][5]), 4);
+                        symbol.RSI = Math.Round(double.Parse(fundamentalList[symbol.Symbol][6]), 4);
+
+                        fundList.Add(new FutureData()
+                        {
+                            Symbol = symbol.Symbol,
+                            Price = symbol.Price,
+                            EarningsGrowth = symbol.EarningsGrowth,
+                            ADX = symbol.ADX,
+                            BBANDS = symbol.BBANDS,
+                            BOP = symbol.BOP,
+                            MACD = symbol.MACD,
+                            MOM = symbol.MOM,
+                            RSI = symbol.RSI,
+                            ForwardPE = symbol.ForwardPE
+                        });
+                    }
+                }
+
+                fundList.RemoveAll(symbol => symbol.ADX == 0); //removes symbols missing fundamentals
+            }
+
+            return fundList;
         }
     }
 }

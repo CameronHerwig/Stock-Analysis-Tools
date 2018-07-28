@@ -287,5 +287,19 @@ namespace Stock_Data
                 }
             }
         }
+
+        public void SaveFutureFundamentals(List<IFutureData> fundamentalData, string month)
+        {
+            var headers = "Symbol, Price, ADX, BBANDS, BOP, MACD, MOM, RSI"; //sets header string
+            var path = $@"..\..\..\Files\FutureFundamentals\{month}.csv";
+            using (var file = File.CreateText(path))
+            {
+                file.WriteLine(headers); //writes headers
+                foreach (var symbol in fundamentalData) //writes whole list
+                {
+                    file.WriteLine(string.Join(",", symbol.Symbol, symbol.Price, symbol.ADX, symbol.BBANDS, symbol.BOP, symbol.MACD, symbol.MOM, symbol.RSI));
+                }
+            }
+        }
     }
 }

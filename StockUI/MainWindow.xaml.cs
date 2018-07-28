@@ -13,6 +13,7 @@ namespace StockUI
     {
         StockDataRepository stock = new StockDataRepository();
         private string month;
+        private string predictionMonth;
         private bool HTMLGathered = false;
         private bool FundamentalsGathered = false;
 
@@ -21,6 +22,7 @@ namespace StockUI
         {
             InitializeComponent();
             SelectMonth.ItemsSource = stock.GetMonths();
+            SelectPredictionMonth.ItemsSource = stock.GetMonths();
         }
 
         private void ExtractHTML(object sender, RoutedEventArgs e)
@@ -66,6 +68,12 @@ namespace StockUI
             FundamentalsGathered = false;
         }
 
+        private void SelectPredictionMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            predictionMonth = SelectPredictionMonth.SelectedItem.ToString();
+            Title = predictionMonth; //for debugging purposes
+        }
+
         private void Compare(object sender, RoutedEventArgs e)
         {
             if (month != null && HTMLGathered && FundamentalsGathered)
@@ -83,6 +91,43 @@ namespace StockUI
             var testData = fundChooser.RetrieveAllComparisons();
             Data1.ItemsSource = testData;
             SizeToContent = SizeToContent.Width; //fixes poor sizing
+        }
+
+        private void Predict(object sender, RoutedEventArgs e)
+        {
+            if (predictionMonth != null)
+            {
+                var stockRepo = new StockDataRepository();
+                var stockData = stockRepo.GatherFutureFundamentals(predictionMonth);
+
+                if (ADX.Text != "ADX")
+                {
+                    stockData.RemoveAll(symbol => symbol.ADX > double.Parse(ADX.Text));
+                }
+                if (BBANDS.Text != "BBANDS")
+                {
+                    stockData.RemoveAll(symbol => symbol.BBANDS > double.Parse(BBANDS.Text));
+                }
+                if (BOP.Text != "BOP")
+                {
+                    stockData.RemoveAll(symbol => symbol.BOP > double.Parse(BOP.Text));
+                }
+                if (MACD.Text != "MACD")
+                {
+                    stockData.RemoveAll(symbol => symbol.MACD > double.Parse(MACD.Text));
+                }
+                if (MOM.Text != "MOM")
+                {
+                    stockData.RemoveAll(symbol => symbol.MOM > double.Parse(MOM.Text));
+                }
+                if (RSI.Text != "RSI")
+                {
+                    stockData.RemoveAll(symbol => symbol.RSI > double.Parse(RSI.Text));
+                }
+
+                PredictionData.ItemsSource = stockData;
+                SizeToContent = SizeToContent.Width;
+            }         
         }
     }
 }

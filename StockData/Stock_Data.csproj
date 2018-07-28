@@ -62,6 +62,8 @@
     <Compile Include="Comparisons\FundamentalChooser.cs" />
     <Compile Include="Comparisons\IComparisonResult.cs" />
     <Compile Include="Fundamentals\IFundamental.cs" />
+    <Compile Include="FutureData\FutureData.cs" />
+    <Compile Include="FutureData\IFutureData.cs" />
     <Compile Include="StockData\IStockData.cs" />
     <Compile Include="StockData\StockData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,6 +12,9 @@ namespace Stock_Data
 {
     public class FundamentalChooser
     {
+        readonly double minimumGain = double.Parse(ConfigurationManager.AppSettings["MinimumGain"]);
+        readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
+
         private List<string> finished = new List<string>();
 
         public Dictionary<string, Dictionary<string, int>> successRate = new Dictionary<string, Dictionary<string, int>>();
@@ -135,7 +138,7 @@ namespace Stock_Data
             }
             else
             {
-                if (stock.Gain > double.Parse(ConfigurationManager.AppSettings["MinimumGain"]))
+                if (stock.Gain > minimumGain)
                 {
                     AddToSucess(stock, finishedList, 1);
                 }
@@ -184,7 +187,7 @@ namespace Stock_Data
         public void SaveComparisons(List<IComparisonResult> comparisonData, string month)
         {
             var headers = "Test Name, Success%, Total, Success "; //sets header string
-            var path = $@"..\..\..\Files\Results\{month}.csv";
+            var path = $@"..\..\..\Files\Results\{testFolder}\{month}.csv";
             using (var file = File.CreateText(path))
             {
                 file.WriteLine(headers); //writes headers
@@ -197,7 +200,7 @@ namespace Stock_Data
 
         public List<IComparisonResult> RetrieveComparisons(string month)
         {
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
+            string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
 
             if (fileArray != null)
             {
@@ -225,13 +228,14 @@ namespace Stock_Data
 
         public List<ITestResults> RetrieveAllComparisons()
         {
-            string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Results", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
+            DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
+            string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
 
             var testList = new Dictionary<string, ITestResults>();
 
             foreach (string file in fileArray)
             {
-                var month = file.Split('\\')[5];
+                var month = file.Split('\\')[6];
                 var fundamentals = File.ReadLines(file).Select(line => line.Split(',')).ToList(); //grabs csv lines and makes dictionary indexed at symbol
                 fundamentals.RemoveAt(0);
                 foreach (var test in fundamentals)
@@ -315,7 +319,9 @@ namespace Stock_Data
         public void SaveAllComparisons(List<ITestResults> testData)
         {
             var headers = "Test Name, September17, October17, November17, December17, Janurary18, Feburary18, Average%, Average Symbols"; //sets header string
-            var path = $@"..\..\..\Files\Results\Combined\Combined.csv";
+            var path = $@"..\..\..\Files\Results\{testFolder}\Combined\Combined.csv";
+            DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\Combined\");
+
             try
             {
                 using (var file = File.CreateText(path))

@@ -11,7 +11,7 @@ namespace Stock_Data
         public double December17 { get; set; }
         public double Janurary18 { get; set; }
         public double Feburary18 { get; set; }
-        //public double March18 { get; set; }
+        public double March18 { get; set; }
         public double Average { get; set; }
         public double AverageSymbols { get; set; }
     }

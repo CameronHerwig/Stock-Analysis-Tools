@@ -31,12 +31,12 @@ namespace Stock_Data
 
         private readonly List<double> BOP= new List<double>
         {
-            .05, .03, .01, -.01, -.03, -.05
+            .07, .05, .03, .01, -.01, -.03, -.05, -.07
         };
 
         private readonly List<double> MACD = new List<double>
         {
-            0,-1,-2,-3
+            3, 2, 1, 0,-1,-2,-3
         };
 
         private readonly List<double> MOM = new List<double>
@@ -268,6 +268,10 @@ namespace Stock_Data
                                 testList[test[0]].Feburary18 = double.Parse(test[1]);
                                 testList[test[0]].AverageSymbols += double.Parse(test[3]);
                                 break;
+                            case "March18.csv":
+                                testList[test[0]].March18 = double.Parse(test[1]);
+                                testList[test[0]].AverageSymbols += double.Parse(test[3]);
+                                break;
                         }                       
                     }
                     else
@@ -292,6 +296,9 @@ namespace Stock_Data
                             case "Feburary18.csv":
                                 testList.Add(test[0], new TestResults { TestName = test[0], Feburary18 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3])});
                                 break;
+                            case "March18.csv":
+                                testList.Add(test[0], new TestResults { TestName = test[0], March18 = double.Parse(test[1]), AverageSymbols = double.Parse(test[3]) });
+                                break;
                         }
                     }
                 }
@@ -304,7 +311,8 @@ namespace Stock_Data
                     test.Value.November17 +
                     test.Value.December17 +
                     test.Value.Janurary18 +
-                    test.Value.Feburary18) / fileArray.Length),4);
+                    test.Value.Feburary18 +
+                    test.Value.March18) / fileArray.Length),4);
                 test.Value.AverageSymbols = Math.Round((test.Value.AverageSymbols / fileArray.Length), 2);
             }
 
@@ -318,7 +326,7 @@ namespace Stock_Data
 
         public void SaveAllComparisons(List<ITestResults> testData)
         {
-            var headers = "Test Name, September17, October17, November17, December17, Janurary18, Feburary18, Average%, Average Symbols"; //sets header string
+            var headers = "Test Name, September17, October17, November17, December17, Janurary18, Feburary18, March18, Average%, Average Symbols"; //sets header string
             var path = $@"..\..\..\Files\Results\{testFolder}\Combined\Combined.csv";
             DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\Combined\");
 

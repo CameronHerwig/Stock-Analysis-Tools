@@ -25,16 +25,17 @@ namespace Stock_Data
             var date = dateClass.GetDate("ADX", month); //Gathers date for query
 
             double ADX = 0;
-            
+            string search;
+
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Technical Analysis: ADX"][date]["ADX"];
+                search = json["Technical Analysis: ADX"][date]["ADX"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                ADX = (double)search;
+                ADX = double.Parse(search);
             }
             catch (Exception Ex)
             {
@@ -54,16 +55,17 @@ namespace Stock_Data
             var date = dateClass.GetDate("BBANDS", month); //Gathers date for query
 
             double BBANDS = 0;
+            string search;
 
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Technical Analysis: BBANDS"][date]["Real Upper Band"];
+                search = json["Technical Analysis: BBANDS"][date]["Real Upper Band"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                BBANDS = ((double)search - (double)json["Technical Analysis: BBANDS"][date]["Real Lower Band"]) / price;
+                BBANDS = (double.Parse(search) - (double)json["Technical Analysis: BBANDS"][date]["Real Lower Band"]) / price;
             }
             catch (Exception Ex)
             {
@@ -83,17 +85,18 @@ namespace Stock_Data
             var date = dateClass.GetDate("BOP", month); //Gathers date for query
 
             double BOP = 0;
+            string search;
 
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Technical Analysis: BOP"][date]["BOP"];
+                search = json["Technical Analysis: BOP"][date]["BOP"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                BOP = (double)search;
-            }
+                BOP = double.Parse(search);
+        }
             catch (Exception Ex)
             {
                 MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBOP", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -142,23 +145,29 @@ namespace Stock_Data
             var date = dateClass.GetDate("MOM", month); //Gathers date for query
 
             double MOM = 0;
+            string search;
+            double mom1;
+            double mom2;
+            double mom3;
+            double mom4;
+            double mom5;
 
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Technical Analysis: MOM"][date[4]]["MOM"];
+                search = json["Technical Analysis: MOM"][date[4]]["MOM"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                var mom1 = (double)json["Technical Analysis: MOM"][date[0]]["MOM"];
-                var mom2 = (double)json["Technical Analysis: MOM"][date[1]]["MOM"];
-                var mom3 = (double)json["Technical Analysis: MOM"][date[2]]["MOM"];
-                var mom4 = (double)json["Technical Analysis: MOM"][date[3]]["MOM"];
-                var mom5 = (double)search;
+                mom1 = (double)json["Technical Analysis: MOM"][date[0]]["MOM"];
+                mom2 = (double)json["Technical Analysis: MOM"][date[1]]["MOM"];
+                mom3 = (double)json["Technical Analysis: MOM"][date[2]]["MOM"];
+                mom4 = (double)json["Technical Analysis: MOM"][date[3]]["MOM"];
+                mom5 = double.Parse(search);
 
                 MOM = ((mom1 + mom2 + mom3 + mom4 + mom5) / (5 * price));
-            }
+                }
             catch (Exception Ex)
             {
                 MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetMOM", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -177,15 +186,16 @@ namespace Stock_Data
             var date = dateClass.GetDate("RSI", month); //Gathers date for query
 
             double RSI;
+            string search;
 
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Technical Analysis: RSI"][date]["RSI"];
+                search = json["Technical Analysis: RSI"][date]["RSI"];
                 if (search == null)
                 {
                     return 0;
                 }
-                RSI = (double)search;
+                RSI = double.Parse(search);
             }
             catch (Exception Ex)
             {
@@ -205,22 +215,26 @@ namespace Stock_Data
             var date = dateClass.GetDate("Gain", month); //Gathers date for query
 
             double gain = 0;
+            string search;
+            double buy;
+            double sell;
 
             try //Should only catch API errors, otherwise will return as normal    
             {
-                var search = json["Time Series (Daily)"][date[0]]["2. high"];
+                search = json["Time Series (Daily)"][date[0]]["2. high"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                var buy = (double)search;
-                var sell = (double)json["Time Series (Daily)"][date[1]]["2. high"];
-                gain = ((sell - buy) / buy);
+                buy = double.Parse(search);
+                sell = (double)json["Time Series (Daily)"][date[1]]["2. high"];
+                gain = 1 + ((sell - buy) / buy);
             }
             catch (Exception Ex)
             {
                 MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetGain", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                gain = 0;
             }
 
             return gain;
@@ -233,20 +247,20 @@ namespace Stock_Data
             JObject json = GetJObject(request); //Gets JSON
 
             var date = dateClass.GetDate("Price", month); //Gathers date for query
-
             double price;
+            string search;
 
             try //Should only catch API errors, otherwise will return as normal
             {
-                var search = json["Time Series (Daily)"][date]["4. close"];
+                search = json["Time Series (Daily)"][date]["4. close"];
                 if (search == null)
                 {
                     return 0;
                 }
 
-                price = (double)search;
+                price = double.Parse(search);
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetPrice", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 price = 0;

@@ -65,7 +65,7 @@ namespace Stock_Data
 
                 stockList.Sort((p, q) => p.Symbol.CompareTo(q.Symbol)); //defaults to alphabetical sort
 
-                _stockData = stockList; //sets private variable               
+                _stockData = stockList.GroupBy(x => x.Symbol).Select(x => x.First()).ToList(); //sets private variable               
             }
 
             return _stockData;
@@ -87,14 +87,14 @@ namespace Stock_Data
 
                 foreach(var stock in stockData)
                 {                    
-                    var price = fundamentals.GetPrice(stock.Symbol, month);
-                    stock.ADX = fundamentals.GetADX(stock.Symbol, month);
-                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price);
-                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month);
-                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month);
-                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price);
-                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month);
-                    stock.Gain = fundamentals.GetGain(stock.Symbol, month);
+                    var price = Math.Round(fundamentals.GetPrice(stock.Symbol, month), 4);
+                    stock.ADX = Math.Round(fundamentals.GetADX(stock.Symbol, month), 4);
+                    stock.BBANDS = Math.Round(fundamentals.GetBBANDS(stock.Symbol, month, price), 4);
+                    stock.BOP = Math.Round(fundamentals.GetBOP(stock.Symbol, month), 4);
+                    stock.MACD = Math.Round(fundamentals.GetMACD(stock.Symbol, month), 4);
+                    stock.MOM = Math.Round(fundamentals.GetMOM(stock.Symbol, month, price), 4);
+                    stock.RSI = Math.Round(fundamentals.GetRSI(stock.Symbol, month), 4);
+                    stock.Gain = Math.Round(fundamentals.GetGain(stock.Symbol, month), 4);
 
                     fundList.Add(new Fundamental()
                     {
@@ -109,8 +109,8 @@ namespace Stock_Data
                     });
                 }
 
-                _stockData.RemoveAll(symbol => symbol.ADX == 0);
-                fundList.RemoveAll(symbol => symbol.ADX == 0);
+                ClearEmptyStockData(ref _stockData);
+                ClearEmptyFundData(ref fundList);
 
                 fundamentals.SaveFundamentals(fundList,month);
 
@@ -157,9 +157,8 @@ namespace Stock_Data
                     });
                 }
 
-              _stockData.RemoveAll(symbol => symbol.ADX == 0);
-                fundList.RemoveAll(symbol => symbol.ADX == 0);
-                fundList.RemoveAll(symbol => symbol.MOM == 0);
+                ClearEmptyStockData(ref _stockData);
+                ClearEmptyFutureData(ref fundList);
 
                 fundamentals.SaveFutureFundamentals(fundList, month);
 
@@ -270,7 +269,7 @@ namespace Stock_Data
                     }
                 }
 
-                _stockData.RemoveAll(symbol => symbol.ADX == 0); //removes symbols missing fundamentals
+                ClearEmptyStockData(ref _stockData);
             }
 
             return _stockData;
@@ -331,10 +330,56 @@ namespace Stock_Data
                     }
                 }
 
-                fundList.RemoveAll(symbol => symbol.ADX == 0); //removes symbols missing fundamentals
+                ClearEmptyFutureData(ref fundList); //removes symbols missing fundamentals
             }
 
             return fundList;
+        }
+
+        public void ClearEmptyFundData(ref List<IFundamental> dataList )
+        {
+            dataList.RemoveAll(symbol => symbol.ADX == 0);
+            dataList.RemoveAll(symbol => symbol.BBANDS == 0);
+            dataList.RemoveAll(symbol => symbol.BOP == 0);
+            dataList.RemoveAll(symbol => symbol.MACD == 0);
+            dataList.RemoveAll(symbol => symbol.MOM == 0);
+            dataList.RemoveAll(symbol => symbol.RSI == 0);
+            dataList.RemoveAll(symbol => symbol.Gain == 0);
+        }
+
+        public void ClearEmptyStockData(ref List<IStockData> dataList)
+        {
+            dataList.RemoveAll(symbol => symbol.ADX == 0);
+            dataList.RemoveAll(symbol => symbol.BBANDS == 0);
+            dataList.RemoveAll(symbol => symbol.BOP == 0);
+            dataList.RemoveAll(symbol => symbol.MACD == 0);
+            dataList.RemoveAll(symbol => symbol.MOM == 0);
+            dataList.RemoveAll(symbol => symbol.RSI == 0);
+            dataList.RemoveAll(symbol => symbol.Gain == 0);
+        }
+
+        public void ClearEmptyFutureData(ref List<IFutureData> dataList)
+        {
+            dataList.RemoveAll(symbol => symbol.ADX == 0);
+            dataList.RemoveAll(symbol => symbol.BBANDS == 0);
+            dataList.RemoveAll(symbol => symbol.BOP == 0);
+            dataList.RemoveAll(symbol => symbol.MACD == 0);
+            dataList.RemoveAll(symbol => symbol.MOM == 0);
+            dataList.RemoveAll(symbol => symbol.RSI == 0);
+        }
+    }
+
+    class ItemEqualityComparer : IEqualityComparer<StockData>
+    {
+        public bool Equals(StockData x, StockData y)
+        {
+            // Two items are equal if their keys are equal.
+            return x.Symbol == y.Symbol;
+        }
+
+        public int GetHashCode(StockData obj)
+        {
+            return obj.Symbol.GetHashCode();
         }
     }
 }

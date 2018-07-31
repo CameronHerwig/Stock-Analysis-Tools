@@ -1,7 +1,7 @@
 ﻿<Window x:Class="StockUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Stock Data" Height="550" Width="500" Margin="10,0,10,10">
+    Title="{Binding windowTitle, UpdateSourceTrigger=PropertyChanged}" Height="550" Width="500" Margin="10,0,10,10">
     <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Margin="0,10,0,0"  Width="Auto">
         <TabItem Header="Fundamentals">
             <Grid Background="#FFE5E5E5" Margin="0,0,0,-11" Width="Auto">
@@ -27,15 +27,17 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
+                <CheckBox Content="Show Errors" Grid.Column="2" HorizontalAlignment="Left" Margin="160,440,20,20" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" RenderTransformOrigin="0.386,-5.067"/>
             </Grid>
         </TabItem>
         <TabItem Header="Comparisons">
             <Grid Background="#FFE5E5E5" Margin="0,1,1,1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="222*"/>
+                    <ColumnDefinition Width="28*"/>
+                    <ColumnDefinition Width="194*"/>
                     <ColumnDefinition Width="263*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Margin="25,25,-8,3" VerticalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="2">
+                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Margin="25,25,-8,3" VerticalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3">
                     <DataGrid x:Name="Data1"  Height="244" Margin="0,0,30,20" RenderTransformOrigin="0.5,0.5"/>
                     <Button HorizontalAlignment="Right" Content="Get All Comparisons" Margin="0,10,20,0" Height="20" Width="150" Click="GetComparisons"/>
                 </StackPanel>

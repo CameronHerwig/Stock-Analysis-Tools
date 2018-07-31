@@ -16,7 +16,7 @@ namespace Stock_Data
         RestClient client = new RestClient("https://www.alphavantage.co/"); //Preps client for calls
         private readonly string apiKey = ConfigurationManager.AppSettings["APIKey"]; //Change as needed
 
-        public double GetADX(string symbol, string month)
+        public double GetADX(string symbol, string month, bool showErrors)
         {          
             var request = new RestRequest($"query?function=ADX&symbol={symbol}&interval=weekly&time_period=10&apikey={apiKey}"); //Builds individual request
 
@@ -39,14 +39,17 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetADX", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetADX", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 ADX = 0;
             }
 
             return ADX;
         }
 
-        public double GetBBANDS(string symbol, string month, double price)
+        public double GetBBANDS(string symbol, string month, double price, bool showErrors)
         {
             var request = new RestRequest($"query?function=BBANDS&symbol={symbol}&interval=weekly&time_period=5&series_type=close&apikey={apiKey}"); //Builds individual request
 
@@ -69,14 +72,17 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBBANDS", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBBANDS", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 BBANDS = 0;
             }
 
             return BBANDS;
         }
 
-        public double GetBOP(string symbol, string month)
+        public double GetBOP(string symbol, string month, bool showErrors)
         { 
             var request = new RestRequest($"query?function=BOP&symbol={symbol}&interval=monthly&apikey={apiKey}"); //Builds individual request
 
@@ -99,7 +105,10 @@ namespace Stock_Data
         }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBOP", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBOP", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 BOP = 0;
             }
 
@@ -107,7 +116,7 @@ namespace Stock_Data
             return BOP;
         }
 
-        public double GetMACD(string symbol, string month)
+        public double GetMACD(string symbol, string month, bool showErrors)
         {
             var request = new RestRequest($"query?function=MACD&symbol={symbol}&interval=daily&series_type=open&apikey={apiKey}"); //Builds individual request
 
@@ -129,14 +138,17 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetMACD", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetMACD", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 MACD = 0;
             }
 
             return MACD;
         }
 
-        public double GetMOM(string symbol, string month, double price)
+        public double GetMOM(string symbol, string month, double price, bool showErrors)
         {
             var request = new RestRequest($"query?function=MOM&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={apiKey}"); //Builds individual request
 
@@ -170,14 +182,17 @@ namespace Stock_Data
                 }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetMOM", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetMOM", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 MOM = 0;
             }
 
             return MOM;
         }
 
-        public double GetRSI(string symbol, string month)
+        public double GetRSI(string symbol, string month, bool showErrors)
         {
             var request = new RestRequest($"query?function=RSI&symbol={symbol}&interval=weekly&time_period=10&series_type=close&apikey={apiKey}"); //Builds individual request
 
@@ -199,14 +214,17 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetRSI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetRSI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 RSI = 0;
             }
 
             return RSI;
         }
 
-        public double GetGain(string symbol, string month)
+        public double GetGain(string symbol, string month, bool showErrors)
         {
             var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apiKey}"); //Builds individual request
 
@@ -233,14 +251,17 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetGain", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetGain", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 gain = 0;
             }
 
             return gain;
         }
 
-        public double GetPrice(string symbol, string month)
+        public double GetPrice(string symbol, string month, bool showErrors)
         {
             var request = new RestRequest($"query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={apiKey}"); //Builds individual request
 
@@ -262,7 +283,10 @@ namespace Stock_Data
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetPrice", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if(showErrors)
+                {
+                    MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetPrice", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
                 price = 0;
             }
 

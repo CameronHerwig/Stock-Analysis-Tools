@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace Stock_Data
 {
     public class StockDataRepository
     {
         private List<IStockData> _stockData;
-
         readonly double minimumGrowth = double.Parse(ConfigurationManager.AppSettings["MinimumGrowth"]);
         readonly int minimumPrice = int.Parse(ConfigurationManager.AppSettings["MinimumPrice"]);
         readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
+        public static int stockCount = 0;
+        public static int fundCount = 0;
 
         public List<IStockData> RetrieveHTML(string month)
         {
@@ -71,10 +73,11 @@ namespace Stock_Data
             return _stockData;
         }
 
-        public List<IStockData> GatherFundamentals(string month)
+        public List<IStockData> GatherFundamentals(string month, bool showErrors)
         {
             var fundamentals = new FundamentalRepository();
             var fundList = new List<IFundamental>();
+
             string[] fileArray = Directory.GetFiles(@"..\..\..\Files\Fundamentals", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
 
             if (fileArray.Length != 0)
@@ -84,17 +87,19 @@ namespace Stock_Data
             else
             {
                 var stockData = _stockData;
+                stockCount = stockData.Count();
 
                 foreach(var stock in stockData)
-                {                    
-                    var price = Math.Round(fundamentals.GetPrice(stock.Symbol, month), 4);
-                    stock.ADX = Math.Round(fundamentals.GetADX(stock.Symbol, month), 4);
-                    stock.BBANDS = Math.Round(fundamentals.GetBBANDS(stock.Symbol, month, price), 4);
-                    stock.BOP = Math.Round(fundamentals.GetBOP(stock.Symbol, month), 4);
-                    stock.MACD = Math.Round(fundamentals.GetMACD(stock.Symbol, month), 4);
-                    stock.MOM = Math.Round(fundamentals.GetMOM(stock.Symbol, month, price), 4);
-                    stock.RSI = Math.Round(fundamentals.GetRSI(stock.Symbol, month), 4);
-                    stock.Gain = Math.Round(fundamentals.GetGain(stock.Symbol, month), 4);
+                {
+                    fundCount++;
+                    var price = Math.Round(fundamentals.GetPrice(stock.Symbol, month, showErrors), 4);
+                    stock.ADX = Math.Round(fundamentals.GetADX(stock.Symbol, month, showErrors), 4);
+                    stock.BBANDS = Math.Round(fundamentals.GetBBANDS(stock.Symbol, month, price, showErrors), 4);
+                    stock.BOP = Math.Round(fundamentals.GetBOP(stock.Symbol, month, showErrors), 4);
+                    stock.MACD = Math.Round(fundamentals.GetMACD(stock.Symbol, month, showErrors), 4);
+                    stock.MOM = Math.Round(fundamentals.GetMOM(stock.Symbol, month, price, showErrors), 4);
+                    stock.RSI = Math.Round(fundamentals.GetRSI(stock.Symbol, month, showErrors), 4);
+                    stock.Gain = Math.Round(fundamentals.GetGain(stock.Symbol, month, showErrors), 4);
 
                     fundList.Add(new Fundamental()
                     {
@@ -118,7 +123,7 @@ namespace Stock_Data
             }
         }
 
-        public List<IFutureData> GatherFutureFundamentals(string month)
+        public List<IFutureData> GatherFutureFundamentals(string month, bool showErrors)
         {
             var fundamentals = new FundamentalRepository();
             var fundList = new List<IFutureData>();
@@ -134,13 +139,13 @@ namespace Stock_Data
 
                 foreach (var stock in stockData)
                 {
-                    var price = fundamentals.GetPrice(stock.Symbol, month);
-                    stock.ADX = fundamentals.GetADX(stock.Symbol, month);
-                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price);
-                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month);
-                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month);
-                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price);
-                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month);
+                    var price = fundamentals.GetPrice(stock.Symbol, month, showErrors);
+                    stock.ADX = fundamentals.GetADX(stock.Symbol, month, showErrors);
+                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price, showErrors);
+                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month, showErrors);
+                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month, showErrors);
+                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price, showErrors);
+                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month, showErrors);
 
                     fundList.Add(new FutureData()
                     {
@@ -172,7 +177,7 @@ namespace Stock_Data
             string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
             var fundamentals = new FundamentalChooser();
 
-            if (fileArray.Length != 0)
+            if (fileArray.Length == 0)
             {
                 return fundamentals.RetrieveComparisons(month);
             }

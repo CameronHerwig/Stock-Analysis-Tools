@@ -1,6 +1,9 @@
 ﻿using Stock_Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,6 +19,8 @@ namespace StockUI
         private string predictionMonth;
         private bool HTMLGathered = false;
         private bool FundamentalsGathered = false;
+        private bool Ready = true;
+        private bool showErrors = false;
 
 
         public MainWindow()
@@ -27,36 +32,44 @@ namespace StockUI
 
         private void ExtractHTML(object sender, RoutedEventArgs e)
         {
-            if(month != null)
+            if(month != null && Ready)
             {
+                Ready = false;
                 var stockData = stock.RetrieveHTML(month); //sends month to get HTMl data
                 Data.ItemsSource = stockData;
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
                 HTMLGathered = true;
+                Ready = true;
             }           
         }
 
         private void AddFundamentals(object sender, RoutedEventArgs e)
         {   
-            if (month != null && HTMLGathered)
+            if (month != null && HTMLGathered && Ready)
             {
+                Ready = false;
                 var stockData = stock.RetrieveFundamentals(month); //sends month and adds fundamental data
                 Data.ItemsSource = null; 
                 Data.ItemsSource = stockData; //along with null set will refresh data
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
                 FundamentalsGathered = true;
+                Ready = true;
             }          
         }
 
-        private void GatherFundamentals(object sender, RoutedEventArgs e)
+        private async void GatherFundamentals(object sender, RoutedEventArgs e)
         {
-            if (month != null && HTMLGathered)
+            if (month != null && HTMLGathered && Ready)
             {
-                var stockData = stock.GatherFundamentals(month); //sends month and gathers fundamental data
+                Ready = false;
+                Task.Run(async () => StartTimer());
+                Title = "Gathering Fundamentals - Please Wait";
+                var stockData = await Task.Run(() => stock.GatherFundamentals(month, showErrors)); //sends month and gathers fundamental data
                 Data.ItemsSource = null;
                 Data.ItemsSource = stockData; //along with null set will refresh data
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
                 FundamentalsGathered = true;
+                Ready = true;
             }
         }
 
@@ -76,12 +89,14 @@ namespace StockUI
 
         private void Compare(object sender, RoutedEventArgs e)
         {
-            if (month != null && HTMLGathered && FundamentalsGathered)
+            if (month != null && HTMLGathered && FundamentalsGathered && Ready)
             {
+                Ready = false;
                 var stockData = stock.GetComparisons(month);
                 Data.ItemsSource = null;
                 Data.ItemsSource = stockData; //along with null set will refresh data
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
+                Ready = true;
             }
         }
 
@@ -93,12 +108,14 @@ namespace StockUI
             SizeToContent = SizeToContent.Width; //fixes poor sizing
         }
 
-        private void Predict(object sender, RoutedEventArgs e)
+        private async void Predict(object sender, RoutedEventArgs e)
         {
-            if (predictionMonth != null)
+            if (predictionMonth != null && Ready)
             {
+                Ready = false;
+                Title = "Gathering Fundamentals - Please Wait";
                 var stockRepo = new StockDataRepository();
-                var stockData = stockRepo.GatherFutureFundamentals(predictionMonth);
+                var stockData = await Task.Run(() => stockRepo.GatherFutureFundamentals(predictionMonth, showErrors));
 
                 if (ADX.Text != "ADX")
                 {
@@ -127,7 +144,40 @@ namespace StockUI
 
                 PredictionData.ItemsSource = stockData;
                 SizeToContent = SizeToContent.Width;
+                Ready = true;
             }         
+        }
+
+        public async Task StartTimer()
+        {
+            await Task.Run(async () =>
+            {
+            while (Ready == false)
+                {
+                    GetProgress();
+                    await Task.Delay(15000);
+                }
+            });
+        }
+
+        private void GetProgress()
+        {
+            var stockCount = StockDataRepository.stockCount;
+            var fundCount = StockDataRepository.fundCount;
+            this.Dispatcher.Invoke(() =>
+            {
+                Title = $"Gathering Fundamentals - Please Wait - {fundCount}/{stockCount}";
+            });
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            showErrors = true;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            showErrors = false;
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Stock_Data
+﻿using System.ComponentModel;
+
+namespace Stock_Data
 {
-    public class StockData : IStockData
+    public class StockData : IStockData, INotifyPropertyChanged
     {
         public string Symbol { get; set; }
         public double Price { get; set; }
@@ -13,5 +15,7 @@
         public double RSI { get; set; }
         public double Gain { get; set; }
         public double ForwardPE { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

@@ -14,6 +14,7 @@ namespace StockUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         StockDataRepository stock = new StockDataRepository();
         private string month;
         private string predictionMonth;
@@ -62,7 +63,7 @@ namespace StockUI
             if (month != null && HTMLGathered && Ready)
             {
                 Ready = false;
-                Task.Run(async () => StartTimer());
+                Task.Run(() => StartTimer());
                 Title = "Gathering Fundamentals - Please Wait";
                 var stockData = await Task.Run(() => stock.GatherFundamentals(month, showErrors)); //sends month and gathers fundamental data
                 Data.ItemsSource = null;
@@ -115,8 +116,10 @@ namespace StockUI
                 Ready = false;
                 Title = "Gathering Fundamentals - Please Wait";
                 var stockRepo = new StockDataRepository();
+                Task.Run(() => StartTimer());
                 var stockData = await Task.Run(() => stockRepo.GatherFutureFundamentals(predictionMonth, showErrors));
-
+                PredictionData.ItemsSource = null;
+                PredictionData.ItemsSource = stockData;
                 if (ADX.Text != "ADX")
                 {
                     stockData.RemoveAll(symbol => symbol.ADX > double.Parse(ADX.Text));

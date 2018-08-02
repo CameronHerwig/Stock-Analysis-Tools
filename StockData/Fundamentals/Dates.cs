@@ -52,6 +52,24 @@ namespace Stock_Data
             {"July18", "2018-06-29" },
             {"August18", "2018-07-31" }
         };
+
+        private readonly Dictionary<string, string> BOPALT = new Dictionary<string, string>
+        {
+            {"August17", "2017-07-31"},
+            {"September17", "2017-08-31"},
+            {"October17", "2017-09-29" },
+            {"November17", "2017-10-31" },
+            {"December17", "2017-11-30" },
+            {"Janurary18", "2017-12-29" },
+            {"Feburary18", "2018-01-31" },
+            {"March18", "2018-02-28" },
+            {"April18", "2018-03-31" },
+            {"May18", "2018-04-30" },
+            {"June18", "2018-05-31" },
+            {"July18", "2018-06-29" },
+            {"August18", "2018-07-31" }
+        };
+
         private readonly Dictionary<string, List<string>> MOM = new Dictionary<string, List<string>>
         {
             {"August17", new List<string>{"2017-07-24", "2017-07-25", "2017-07-26", "2017-07-27", "2017-07-28"}},
@@ -66,7 +84,7 @@ namespace Stock_Data
             {"May18", new List<string>{ "2018-04-25", "2018-04-26", "2018-04-27", "2018-04-30", "2018-05-01"}},
             {"June18", new List<string>{ "2018-05-25", "2018-05-29", "2018-05-30", "2018-05-31", "2018-06-01"}},
             {"July18", new List<string>{ "2018-06-25", "2018-06-26", "2018-06-27", "2018-06-28", "2018-06-29"}},
-            {"August18", new List<string>{ "2018-01-29", "2018-01-30", "2018-01-31", "2018-02-01", "2018-02-02"}}
+            {"August18", new List<string>{ "2018-07-25", "2018-07-26", "2018-07-27", "2018-07-30", "2018-07-31"}}
         };
         private readonly Dictionary<string, string> MACD = new Dictionary<string, string>
         {
@@ -114,7 +132,7 @@ namespace Stock_Data
             {"May18", "2018-04-27" },
             {"June18", "2018-06-01" },
             {"July18", "2018-06-29" },
-            {"August18", "2018-07-27" }
+            {"August18", "2018-07-31" }
         };
         private readonly Dictionary<string, List<string>> Gain = new Dictionary<string, List<string>>
         {
@@ -144,6 +162,8 @@ namespace Stock_Data
                     return BBANDS[month];
                 case ("BOP"):
                     return BOP[month];
+                case ("BOPALT"):
+                    return BOPALT[month];
                 case ("MACD"):
                     return MACD[month];
                 case ("MOM"):

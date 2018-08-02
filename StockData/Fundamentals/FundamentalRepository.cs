@@ -30,11 +30,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Technical Analysis: ADX"][date]["ADX"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 ADX = double.Parse(search);
             }
             catch (Exception Ex)
@@ -63,11 +58,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Technical Analysis: BBANDS"][date]["Real Upper Band"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 BBANDS = (double.Parse(search) - (double)json["Technical Analysis: BBANDS"][date]["Real Lower Band"]) / price;
             }
             catch (Exception Ex)
@@ -96,11 +86,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Technical Analysis: BOP"][date]["BOP"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 BOP = double.Parse(search);
         }
             catch (Exception Ex)
@@ -109,7 +94,16 @@ namespace Stock_Data
                 {
                     MessageBox.Show(Ex.Message, "Stock_Data:FundamentalRepository:GetBOP", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
-                BOP = 0;
+                try
+                {
+                    date = dateClass.GetDate("BOPALT", month);
+                    search = json["Technical Analysis: BOP"][date]["BOP"];
+                    BOP = double.Parse(search);
+                }
+                catch
+                {
+                    BOP = 0;
+                }
             }
 
 
@@ -129,11 +123,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 var search = json["Technical Analysis: MACD"][date]["MACD"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 MACD = (double)search;
             }
             catch (Exception Ex)
@@ -167,11 +156,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Technical Analysis: MOM"][date[4]]["MOM"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 mom1 = (double)json["Technical Analysis: MOM"][date[0]]["MOM"];
                 mom2 = (double)json["Technical Analysis: MOM"][date[1]]["MOM"];
                 mom3 = (double)json["Technical Analysis: MOM"][date[2]]["MOM"];
@@ -206,10 +190,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Technical Analysis: RSI"][date]["RSI"];
-                if (search == null)
-                {
-                    return 0;
-                }
                 RSI = double.Parse(search);
             }
             catch (Exception Ex)
@@ -240,11 +220,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal    
             {
                 search = json["Time Series (Daily)"][date[0]]["2. high"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 buy = double.Parse(search);
                 sell = (double)json["Time Series (Daily)"][date[1]]["2. high"];
                 gain = 1 + ((sell - buy) / buy);
@@ -274,11 +249,6 @@ namespace Stock_Data
             try //Should only catch API errors, otherwise will return as normal
             {
                 search = json["Time Series (Daily)"][date]["4. close"];
-                if (search == null)
-                {
-                    return 0;
-                }
-
                 price = double.Parse(search);
             }
             catch (Exception Ex)
@@ -296,17 +266,32 @@ namespace Stock_Data
         private JObject GetJObject(RestRequest request)
         {
             System.Threading.Thread.Sleep(delay);
+            JObject json = null;
+            string info;
             var returned = client.Execute(request); //gathers response
+            try
+            {
+               json = JObject.Parse(returned.Content); //converts to queryable object
+               info = (string)json["Information"]; //Checks if API returned call timer exceeded and retries
+            }
+            catch
+            {
+                info = "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.";
+            }
 
-            JObject json = JObject.Parse(returned.Content); //converts to queryable object
-
-            var info = (string)json["Information"]; //Checks if API returned call timer exceeded and retries
             while (info == "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.")
             {
                 System.Threading.Thread.Sleep(delay);
-                returned = client.Execute(request);
-                json = JObject.Parse(returned.Content);
-                info = (string)json["Information"];
+                try
+                {
+                    returned = client.Execute(request);
+                    json = JObject.Parse(returned.Content); //converts to queryable object
+                    info = (string)json["Information"]; //Checks if API returned call timer exceeded and retries
+                }
+                catch
+                {
+                    info = "Thank you for using Alpha Vantage! Please visit https://www.alphavantage.co/premium/ if you would like to have a higher API call volume.";
+                }
             }
 
             return json;

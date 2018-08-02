@@ -91,7 +91,7 @@ namespace Stock_Data
 
                 foreach(var stock in stockData)
                 {
-                    fundCount++;
+                    fundCount = fundList.Count();
                     var price = Math.Round(fundamentals.GetPrice(stock.Symbol, month, showErrors), 4);
                     stock.ADX = Math.Round(fundamentals.GetADX(stock.Symbol, month, showErrors), 4);
                     stock.BBANDS = Math.Round(fundamentals.GetBBANDS(stock.Symbol, month, price, showErrors), 4);
@@ -136,9 +136,11 @@ namespace Stock_Data
             else
             {
                 var stockData = RetrieveHTML(month);
+                stockCount = stockData.Count();
 
                 foreach (var stock in stockData)
                 {
+                    fundCount = fundList.Count();
                     var price = fundamentals.GetPrice(stock.Symbol, month, showErrors);
                     stock.ADX = fundamentals.GetADX(stock.Symbol, month, showErrors);
                     stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price, showErrors);

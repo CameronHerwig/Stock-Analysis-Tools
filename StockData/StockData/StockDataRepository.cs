@@ -16,6 +16,7 @@ namespace Stock_Data
         readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
         public static int stockCount = 0;
         public static int fundCount = 0;
+        private List<IFutureData> _fundList;
 
         public List<IStockData> RetrieveHTML(string month)
         {
@@ -123,10 +124,28 @@ namespace Stock_Data
             }
         }
 
+        public List<IFutureData> RetrieveFutureHTML(string month)
+        {
+            _fundList = new List<IFutureData>();
+
+            var stockData = RetrieveHTML(month);
+
+            foreach(var stock in stockData)
+            {
+                _fundList.Add(new FutureData()
+                {
+                    Symbol = stock.Symbol,
+                    Price = stock.Price,
+                    EarningsGrowth = stock.EarningsGrowth,
+                    ForwardPE = stock.ForwardPE
+                });
+            }
+
+            return _fundList;
+        }
         public List<IFutureData> GatherFutureFundamentals(string month, bool showErrors)
         {
             var fundamentals = new FundamentalRepository();
-            var fundList = new List<IFutureData>();
             string[] fileArray = Directory.GetFiles(@"..\..\..\Files\FutureFundamentals\", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
 
             if (fileArray.Length != 0)
@@ -135,41 +154,27 @@ namespace Stock_Data
             }
             else
             {
-                var stockData = RetrieveHTML(month);
-                stockCount = stockData.Count();
+                stockCount = _fundList.Count();
+                fundCount = 0;
 
-                foreach (var stock in stockData)
-                {
-                    fundCount = fundList.Count();
-                    var price = fundamentals.GetPrice(stock.Symbol, month, showErrors);
-                    stock.ADX = fundamentals.GetADX(stock.Symbol, month, showErrors);
-                    stock.BBANDS = fundamentals.GetBBANDS(stock.Symbol, month, price, showErrors);
-                    stock.BOP = fundamentals.GetBOP(stock.Symbol, month, showErrors);
-                    stock.MACD = fundamentals.GetMACD(stock.Symbol, month, showErrors);
-                    stock.MOM = fundamentals.GetMOM(stock.Symbol, month, price, showErrors);
-                    stock.RSI = fundamentals.GetRSI(stock.Symbol, month, showErrors);
-
-                    fundList.Add(new FutureData()
-                    {
-                        Symbol = stock.Symbol,
-                        Price = price,
-                        EarningsGrowth = stock.EarningsGrowth,
-                        ADX = stock.ADX,
-                        BBANDS = stock.BBANDS,
-                        BOP = stock.BOP,
-                        MACD = stock.MACD,
-                        MOM = stock.MOM,
-                        RSI = stock.RSI,                
-                        ForwardPE = stock.ForwardPE
-                    });
+                foreach (var stock in _fundList)
+                {                  
+                    stock.Price = fundamentals.GetPrice(stock.Symbol, month, showErrors);
+                    stock.ADX = Math.Round(fundamentals.GetADX(stock.Symbol, month, showErrors), 4);
+                    stock.BBANDS = Math.Round(fundamentals.GetBBANDS(stock.Symbol, month, stock.Price, showErrors), 4);
+                    stock.BOP = Math.Round(fundamentals.GetBOP(stock.Symbol, month, showErrors), 4);
+                    stock.MACD = Math.Round(fundamentals.GetMACD(stock.Symbol, month, showErrors), 4);
+                    stock.MOM = Math.Round(fundamentals.GetMOM(stock.Symbol, month, stock.Price, showErrors), 4);
+                    stock.RSI = Math.Round(fundamentals.GetRSI(stock.Symbol, month, showErrors), 4);
+                    fundCount++;
                 }
 
                 ClearEmptyStockData(ref _stockData);
-                ClearEmptyFutureData(ref fundList);
+                ClearEmptyFutureData(ref _fundList);
 
-                fundamentals.SaveFutureFundamentals(fundList, month);
+                fundamentals.SaveFutureFundamentals(_fundList, month);
 
-                return fundList;
+                return _fundList;
             }
         }
 
@@ -285,7 +290,7 @@ namespace Stock_Data
         public List<IFutureData> RetrieveFutureFundamentals(string month)
         {
             string[] fileArray = Directory.GetFiles(@"..\..\..\Files\FutureFundamentals\", $"{month}.csv", SearchOption.AllDirectories); //gets months fundamentals
-            var fundList = new List<IFutureData>();
+            _fundList = new List<IFutureData>();
 
             if (fileArray != null)
             {
@@ -321,7 +326,7 @@ namespace Stock_Data
                         symbol.MOM = Math.Round(double.Parse(fundamentalList[symbol.Symbol][5]), 4);
                         symbol.RSI = Math.Round(double.Parse(fundamentalList[symbol.Symbol][6]), 4);
 
-                        fundList.Add(new FutureData()
+                        _fundList.Add(new FutureData()
                         {
                             Symbol = symbol.Symbol,
                             Price = symbol.Price,
@@ -337,10 +342,10 @@ namespace Stock_Data
                     }
                 }
 
-                ClearEmptyFutureData(ref fundList); //removes symbols missing fundamentals
+                ClearEmptyFutureData(ref _fundList); //removes symbols missing fundamentals
             }
 
-            return fundList;
+            return _fundList;
         }
 
         public void ClearEmptyFundData(ref List<IFundamental> dataList )

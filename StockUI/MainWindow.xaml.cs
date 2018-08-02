@@ -16,9 +16,11 @@ namespace StockUI
     {
         #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         StockDataRepository stock = new StockDataRepository();
+        StockDataRepository stockRepo = new StockDataRepository();
         private string month;
         private string predictionMonth;
         private bool HTMLGathered = false;
+        private bool predictHTMLGathered = false;
         private bool FundamentalsGathered = false;
         private bool Ready = true;
         private bool showErrors = false;
@@ -111,36 +113,35 @@ namespace StockUI
 
         private async void Predict(object sender, RoutedEventArgs e)
         {
-            if (predictionMonth != null && Ready)
+            if (predictionMonth != null && Ready && predictHTMLGathered)
             {
                 Ready = false;
                 Title = "Gathering Fundamentals - Please Wait";
-                var stockRepo = new StockDataRepository();
                 Task.Run(() => StartTimer());
                 var stockData = await Task.Run(() => stockRepo.GatherFutureFundamentals(predictionMonth, showErrors));
                 PredictionData.ItemsSource = null;
                 PredictionData.ItemsSource = stockData;
-                if (ADX.Text != "ADX")
+                if (ADX.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.ADX > double.Parse(ADX.Text));
                 }
-                if (BBANDS.Text != "BBANDS")
+                if (BBANDS.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.BBANDS > double.Parse(BBANDS.Text));
                 }
-                if (BOP.Text != "BOP")
+                if (BOP.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.BOP > double.Parse(BOP.Text));
                 }
-                if (MACD.Text != "MACD")
+                if (MACD.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.MACD > double.Parse(MACD.Text));
                 }
-                if (MOM.Text != "MOM")
+                if (MOM.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.MOM > double.Parse(MOM.Text));
                 }
-                if (RSI.Text != "RSI")
+                if (RSI.Text != "")
                 {
                     stockData.RemoveAll(symbol => symbol.RSI > double.Parse(RSI.Text));
                 }
@@ -161,6 +162,7 @@ namespace StockUI
                     await Task.Delay(15000);
                 }
             });
+            Title = "Fundamentals Gathered";
         }
 
         private void GetProgress()
@@ -171,6 +173,21 @@ namespace StockUI
             {
                 Title = $"Gathering Fundamentals - Please Wait - {fundCount}/{stockCount}";
             });
+        }
+
+        private void PredictGetHTML(object sender, RoutedEventArgs e)
+        {
+            if (predictionMonth != null && Ready)
+            {
+                Ready = false;
+                stockRepo = new StockDataRepository();
+                var stockData = stockRepo.RetrieveFutureHTML(predictionMonth);
+                PredictionData.ItemsSource = null;
+                PredictionData.ItemsSource = stockData;
+                SizeToContent = SizeToContent.Width;
+                predictHTMLGathered = true;
+                Ready = true;
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

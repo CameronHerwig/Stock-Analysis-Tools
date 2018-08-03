@@ -184,7 +184,7 @@ namespace Stock_Data
             string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", $"{month}.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
             var fundamentals = new FundamentalChooser();
 
-            if (fileArray.Length == 0)
+            if (fileArray.Length != 0)
             {
                 return fundamentals.RetrieveComparisons(month);
             }
@@ -216,13 +216,15 @@ namespace Stock_Data
                 {
                     double success = result.Value["Success"];
                     double total = result.Value["Total"];
+                    double avgGain = result.Value["TotalGain"] / total;
                     double successPercent = success / total;
                     totalResult.Add(new ComparisonResult
                     {
                         TestName = result.Key,
                         SuccessPercent = Math.Round(successPercent, 4),
                         Total = total,
-                        Success = success
+                        Success = success,
+                        AvgGain = avgGain
                     });
                 }
 

@@ -6,5 +6,6 @@
         double SuccessPercent{ get; set; }
         double Total { get; set; }
         double Success { get; set; }
+        double AvgGain { get; set; }
     }
 }

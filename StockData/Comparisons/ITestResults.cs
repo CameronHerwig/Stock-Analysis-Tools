@@ -14,5 +14,6 @@ namespace Stock_Data
         double March18 { get; set; }
         double Average { get; set; }
         double AverageSymbols { get; set; }
+        double AverageGain { get; set; }
     }
 }

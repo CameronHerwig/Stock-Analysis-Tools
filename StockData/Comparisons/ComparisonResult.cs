@@ -12,5 +12,6 @@ namespace Stock_Data
       public double SuccessPercent{ get; set; }
       public double Total { get; set; }
       public double Success { get; set; }
+      public double AvgGain { get; set; }
     }
 }

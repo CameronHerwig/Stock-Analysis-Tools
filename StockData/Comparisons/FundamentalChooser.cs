@@ -362,7 +362,7 @@ namespace Stock_Data
             }           
         }
 
-        public List<ExpandoObject> RetrieveAllComparisonsDynamic()
+        public List<ExpandoObject> RetrieveAllComparisonsDynamic(bool keepEmpties)
         {
             DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
             string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamental
@@ -423,6 +423,12 @@ namespace Stock_Data
             }
 
             var finished = testList.Values.ToList();
+
+            if(keepEmpties)
+            {
+                finished.RemoveAll(c => c.Count() != (fileArray.Length + 4)); //Optionally Remove All Empty Months
+            }
+
             return finished;
         }
 

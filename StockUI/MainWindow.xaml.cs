@@ -25,6 +25,7 @@ namespace StockUI
         private bool FundamentalsGathered = false;
         private bool Ready = true;
         private bool showErrors = false;
+        private bool keepEmpties = false;
 
 
         public MainWindow()
@@ -107,7 +108,9 @@ namespace StockUI
         private void GetComparisons(object sender, RoutedEventArgs e)
         {
             var fundChooser = new FundamentalChooser();
-            Data1.ItemsSource = fundChooser.RetrieveAllComparisonsDynamic();
+            Data1.Columns.Clear();
+            Data1.ItemsSource = null;
+            Data1.ItemsSource = fundChooser.RetrieveAllComparisonsDynamic(keepEmpties);
             var rows = Data1.ItemsSource.OfType<IDictionary<string, object>>();
             var columns = rows.SelectMany(d => d.Keys).Distinct(StringComparer.OrdinalIgnoreCase);
 
@@ -212,6 +215,15 @@ namespace StockUI
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             showErrors = false;
+        }
+
+        private void CheckBox_Checked_1(object sender, RoutedEventArgs e)
+        {
+            keepEmpties = true;
+        }
+        private void CheckBox_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+            keepEmpties = false;
         }
     }
 }

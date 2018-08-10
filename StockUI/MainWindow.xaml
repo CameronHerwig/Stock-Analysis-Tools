@@ -38,7 +38,7 @@
                     <ColumnDefinition Width="263*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Stretch" Height="Auto" Margin="25,25,-8,3" VerticalAlignment="Stretch" Width="Auto" Grid.ColumnSpan="3">
-                    <DataGrid x:Name="Data1"  Height="244" Margin="0,0,30,20" RenderTransformOrigin="0.5,0.5"/>
+                    <DataGrid x:Name="Data1"  AutoGenerateColumns="False" ItemsSource="{Binding Results}" Height="244" Margin="0,0,30,20" RenderTransformOrigin="0.5,0.5"/>
                     <Button HorizontalAlignment="Right" Content="Get All Comparisons" Margin="0,10,20,0" Height="20" Width="150" Click="GetComparisons"/>
                 </StackPanel>
             </Grid>

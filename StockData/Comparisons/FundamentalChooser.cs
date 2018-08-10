@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -235,6 +236,8 @@ namespace Stock_Data
             DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
             string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamentals
 
+            dynamic expando = new ExpandoObject();
+
             var testList = new Dictionary<string, ITestResults>();
 
             foreach (string file in fileArray)
@@ -245,8 +248,8 @@ namespace Stock_Data
                 foreach (var test in fundamentals)
                 {
                     if(testList.ContainsKey(test[0]))
-                    {
-                        switch(month)
+                    {                       
+                        switch (month)
                         {
                             case "September17.csv" :
                                 testList[test[0]].September17 = double.Parse(test[1]);
@@ -357,6 +360,103 @@ namespace Stock_Data
             {
                 MessageBox.Show("Combined Data File Must Be Closed!", "Stock_Data:FundamentalChooser:SaveAllComparisons", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }           
+        }
+
+        public List<ExpandoObject> RetrieveAllComparisonsDynamic()
+        {
+            DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
+            string[] fileArray = Directory.GetFiles($@"..\..\..\Files\Results\{testFolder}\", "*.csv", SearchOption.TopDirectoryOnly); //gets months fundamental
+
+            var testList = new Dictionary<string, ExpandoObject>();
+
+            foreach (string file in fileArray)
+            {
+                var month = file.Split('\\')[6].Split('.')[0];
+                var fundamentals = File.ReadLines(file).Select(line => line.Split(',')).ToList(); //grabs csv lines and makes dictionary indexed at symbol
+                fundamentals.RemoveAt(0);
+
+                foreach (var tests in fundamentals)
+                {
+                    if (testList.ContainsKey(tests[0]))
+                    {
+                        dynamic expandObject = testList[tests[0]];
+
+                        var testAvg = double.Parse((expandObject as IDictionary<String, object>)["AverageSymbols"].ToString());
+                        testAvg += double.Parse(tests[3]);
+                        (expandObject as IDictionary<String, object>)["AverageSymbols"] = testAvg;
+
+                        var testGain = double.Parse((expandObject as IDictionary<String, object>)["AverageGain"].ToString());
+                        testGain += double.Parse(tests[4]);
+                        (expandObject as IDictionary<String, object>)["AverageGain"] = testGain;
+
+
+                        AddProperty(expandObject, month, double.Parse(tests[1]));
+                    }                    
+                    else
+                    {
+                        dynamic testObject = new ExpandoObject();
+                        testObject.TestName = tests[0];
+                        testObject.AverageSymbols = double.Parse(tests[3]);
+                        testObject.AverageGain = double.Parse(tests[4]);
+                        AddProperty(testObject, month, double.Parse(tests[1]));
+
+                        testList.Add(tests[0], testObject);                    
+                    }
+                }
+            }
+
+            foreach(var test in testList)
+            {
+                var values = test.Value.ToList();
+                var avgSymbols = Math.Round(double.Parse(values[1].Value.ToString())/(fileArray.Length), 2);
+                var avgGain = Math.Round(double.Parse(values[2].Value.ToString())/(fileArray.Length), 4);
+                double TotalSuccess = 0;
+                for (int i = 3; i < values.Count; i++)
+                {
+                    TotalSuccess += double.Parse(values[i].Value.ToString());
+                }
+                TotalSuccess /= (fileArray.Length);
+
+                ((IDictionary<String, object>)test.Value)["AverageSymbols"] = avgSymbols;
+                ((IDictionary<String, object>)test.Value)["AverageGain"] = avgGain;
+                AddProperty(test.Value, "SuccessPercent", TotalSuccess);
+            }
+
+            var finished = testList.Values.ToList();
+            return finished;
+        }
+
+        public void SaveAllComparisonsDynamic(List<ITestResults> testData)
+        {
+            var headers = "Test Name, September17, October17, November17, December17, Janurary18, Feburary18, March18, Average%, Average Symbols, Average Gain"; //sets header string
+            var path = $@"..\..\..\Files\Results\{testFolder}\Combined\Combined.csv";
+            DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\Combined\");
+
+            try
+            {
+                using (var file = File.CreateText(path))
+                {
+                    file.WriteLine(headers); //writes headers
+                    foreach (var test in testData) //writes whole list
+                    {
+                        file.WriteLine(string.Join(",", test.TestName, test.September17, test.October17, test.November17, test.December17, test.Janurary18, test.Feburary18, test.Average, test.AverageSymbols, test.AverageGain));
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Combined Data File Must Be Closed!", "Stock_Data:FundamentalChooser:SaveAllComparisons", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        {
+            // ExpandoObject supports IDictionary so we can extend it like this
+            var expandoDict = expando as IDictionary<string, object>;
+            if (expandoDict.ContainsKey(propertyName))
+                expandoDict[propertyName] = propertyValue;
+            else
+                expandoDict.Add(propertyName, propertyValue);
         }
     }
 }

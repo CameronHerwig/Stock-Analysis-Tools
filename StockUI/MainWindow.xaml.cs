@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace StockUI
 {
@@ -106,8 +107,21 @@ namespace StockUI
         private void GetComparisons(object sender, RoutedEventArgs e)
         {
             var fundChooser = new FundamentalChooser();
-            var testData = fundChooser.RetrieveAllComparisons();
-            Data1.ItemsSource = testData;
+            Data1.ItemsSource = fundChooser.RetrieveAllComparisonsDynamic();
+            var rows = Data1.ItemsSource.OfType<IDictionary<string, object>>();
+            var columns = rows.SelectMany(d => d.Keys).Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string text in columns)
+            {
+                // now set up a column and binding for each property
+                var column = new DataGridTextColumn
+                {
+                    Header = text,
+                    Binding = new Binding(text)
+                };
+
+                Data1.Columns.Add(column);
+            }
             SizeToContent = SizeToContent.Width; //fixes poor sizing
         }
 

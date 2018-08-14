@@ -1,7 +1,9 @@
 ﻿using Stock_Data;
 using StockData.Fundamentals;
+using StockUI.PopUp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +31,7 @@ namespace StockUI
         private bool showErrors = false;
         private bool keepEmpties = false;
         private bool datesGathered = false;
+        private bool showPredictErrors = false;
 
         public MainWindow()
         {
@@ -238,6 +241,16 @@ namespace StockUI
             keepEmpties = false;
         }
 
+        private void PredictCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            showPredictErrors = true;
+        }
+
+        private void PredictCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            showPredictErrors = false;
+        }
+
         private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             month = SelectMonth.SelectedItem.ToString();
@@ -250,6 +263,53 @@ namespace StockUI
         {
             predictionMonth = SelectPredictionMonth.SelectedItem.ToString();
             Title = predictionMonth; //for debugging purposes
+        }
+
+        private void Help(object sender, RoutedEventArgs e)
+        {
+             HelpScreen popup = new HelpScreen();
+             popup.ShowDialog();
+        }
+
+        private void Settings(object sender, RoutedEventArgs e)
+        {
+            Settings popup = new Settings();
+            popup.ShowDialog();
+            string APIKey = popup.APIKey;
+            string MinimumGain = popup.MinimumGain;
+            string MinimumDelay = popup.MinimumDelay;
+            string MinimumGrowth = popup.MinimumGrowth;
+            string MinimumPrice = popup.MinimumPrice;
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            if(APIKey != String.Empty)
+            {
+                config.AppSettings.Settings.Remove("APIKey");
+                config.AppSettings.Settings.Add("APIKey", APIKey);
+            }
+            if (MinimumGain != String.Empty)
+            {
+                config.AppSettings.Settings.Remove("MinimumGain");
+                config.AppSettings.Settings.Add("MinimumGain", MinimumGain);
+            }
+            if (MinimumDelay != String.Empty)
+            {
+                config.AppSettings.Settings.Remove("MinimumDelay");
+                config.AppSettings.Settings.Add("MinimumDelay", MinimumDelay);
+            }
+            if (MinimumGrowth != String.Empty)
+            {
+                config.AppSettings.Settings.Remove("MinimumGrowth");
+                config.AppSettings.Settings.Add("MinimumGrowth", MinimumGrowth);
+            }
+            if (MinimumPrice != String.Empty)
+            {
+                config.AppSettings.Settings.Remove("MinimumPrice");
+                config.AppSettings.Settings.Add("MinimumPrice", MinimumPrice);
+            }
+            
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }

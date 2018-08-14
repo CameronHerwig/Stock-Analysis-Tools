@@ -21,3 +21,8 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\HtmlAgility
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\RestSharp.dll
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\Newtonsoft.Json.dll
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\Newtonsoft.Json.xml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\HelpScreen.g.cs
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI_MarkupCompile.lref
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\HelpScreen.baml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\Settings.g.cs
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\Settings.baml

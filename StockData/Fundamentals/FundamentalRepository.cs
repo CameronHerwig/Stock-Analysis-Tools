@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
+using StockData.Fundamentals;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,7 +12,7 @@ namespace Stock_Data
 {
     public class FundamentalRepository
     {
-        Dates dateClass = new Dates();
+        DateRepository dateClass = new DateRepository();
         private readonly int delay = int.Parse(ConfigurationManager.AppSettings["APIDelay"]); //Delay as mandated by API
         RestClient client = new RestClient("https://www.alphavantage.co/"); //Preps client for calls
         private readonly string apiKey = ConfigurationManager.AppSettings["APIKey"]; //Change as needed
@@ -297,7 +298,7 @@ namespace Stock_Data
             return json;
         }
 
-        public void SaveFundamentals(List<IFundamental> fundamentalData, string month)
+        public void SaveFundamentals(IList<IFundamental> fundamentalData, string month)
         {
             var headers = "Symbol, ADX, BBANDS, BOP, MACD, MOM, RSI, Gain"; //sets header string
             var path = $@"..\..\..\Files\Fundamentals\{month}.csv";
@@ -311,7 +312,7 @@ namespace Stock_Data
             }
         }
 
-        public void SaveFutureFundamentals(List<IFutureData> fundamentalData, string month)
+        public void SaveFutureFundamentals(IList<IFutureData> fundamentalData, string month)
         {
             var headers = "Symbol, Price, ADX, BBANDS, BOP, MACD, MOM, RSI"; //sets header string
             var path = $@"..\..\..\Files\FutureFundamentals\{month}.csv";

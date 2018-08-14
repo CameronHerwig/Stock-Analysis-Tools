@@ -58,6 +58,7 @@
     <Compile Include="Comparisons\ComparisonResult.cs" />
     <Compile Include="Comparisons\ITestResults.cs" />
     <Compile Include="Comparisons\TestResults.cs" />
+    <Compile Include="Fundamentals\DateRepository.cs" />
     <Compile Include="Fundamentals\Dates.cs" />
     <Compile Include="Fundamentals\FundamentalRepository.cs" />
     <Compile Include="Fundamentals\Fundamental.cs" />

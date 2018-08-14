@@ -1,4 +1,5 @@
 ﻿using Stock_Data;
+using StockData.Fundamentals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace StockUI
         #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         StockDataRepository stock = new StockDataRepository();
         StockDataRepository stockRepo = new StockDataRepository();
+        DateRepository dateRepo = new DateRepository();
         private string month;
         private string predictionMonth;
         private bool HTMLGathered = false;
@@ -26,7 +28,7 @@ namespace StockUI
         private bool Ready = true;
         private bool showErrors = false;
         private bool keepEmpties = false;
-
+        private bool datesGathered = false;
 
         public MainWindow()
         {
@@ -54,8 +56,11 @@ namespace StockUI
             {
                 Ready = false;
                 var stockData = stock.RetrieveFundamentals(month); //sends month and adds fundamental data
-                Data.ItemsSource = null; 
-                Data.ItemsSource = stockData; //along with null set will refresh data
+                if(stockData.Count != 0)
+                {
+                    Data.ItemsSource = null;
+                    Data.ItemsSource = stockData; //along with null set will refresh data
+                }               
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
                 FundamentalsGathered = true;
                 Ready = true;
@@ -64,7 +69,7 @@ namespace StockUI
 
         private async void GatherFundamentals(object sender, RoutedEventArgs e)
         {
-            if (month != null && HTMLGathered && Ready)
+            if (month != null && HTMLGathered && Ready && datesGathered)
             {
                 Ready = false;
                 Task.Run(() => StartTimer());
@@ -76,20 +81,6 @@ namespace StockUI
                 FundamentalsGathered = true;
                 Ready = true;
             }
-        }
-
-        private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            month = SelectMonth.SelectedItem.ToString();
-            Title = month; //for debugging purposes
-            HTMLGathered = false;
-            FundamentalsGathered = false;
-        }
-
-        private void SelectPredictionMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            predictionMonth = SelectPredictionMonth.SelectedItem.ToString();
-            Title = predictionMonth; //for debugging purposes
         }
 
         private void Compare(object sender, RoutedEventArgs e)
@@ -130,7 +121,7 @@ namespace StockUI
 
         private async void Predict(object sender, RoutedEventArgs e)
         {
-            if (predictionMonth != null && Ready && predictHTMLGathered)
+            if (predictionMonth != null && Ready && predictHTMLGathered && datesGathered)
             {
                 Ready = false;
                 Title = "Gathering Fundamentals - Please Wait";
@@ -207,6 +198,27 @@ namespace StockUI
             }
         }
 
+        private async void GetDates(object sender, RoutedEventArgs e)
+        {
+            Title = "Gathering Dates - In Progress";
+            await Task.Run(() => BuildDate());
+            Title = "Gathering Dates - Complete";
+        }
+
+        private void BuildDate()
+        {         
+            dateRepo.GetSearchMonths();
+            dateRepo.GetADX();
+            dateRepo.GetBBANDS();
+            dateRepo.GetBOP();
+            dateRepo.GetMACD();
+            dateRepo.GetMOM();
+            dateRepo.GetRSI();
+            dateRepo.GetPrice();
+            dateRepo.GetGain();
+            datesGathered = true;
+        }
+
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             showErrors = true;
@@ -224,6 +236,20 @@ namespace StockUI
         private void CheckBox_Unchecked_1(object sender, RoutedEventArgs e)
         {
             keepEmpties = false;
+        }
+
+        private void SelectMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            month = SelectMonth.SelectedItem.ToString();
+            Title = month; //for debugging purposes
+            HTMLGathered = false;
+            FundamentalsGathered = false;
+        }
+
+        private void SelectPredictionMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            predictionMonth = SelectPredictionMonth.SelectedItem.ToString();
+            Title = predictionMonth; //for debugging purposes
         }
     }
 }

@@ -118,11 +118,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\StockData\Stock_Data.csproj">
       <Project>{99d7ea48-4ffb-4acf-9aa9-c56f52266c78}</Project>
       <Name>Stock_Data</Name>

@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="StockData.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="APIDelay" Type="System.String" Scope="User">
+      <Value Profile="(Default)">15000</Value>
+    </Setting>
+    <Setting Name="APIKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">CP85DS06PVNPIF7X</Value>
+    </Setting>
+    <Setting Name="MinimumGain" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.98</Value>
+    </Setting>
+    <Setting Name="MinimumPrice" Type="System.String" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="MinimumGrowth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1.35</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

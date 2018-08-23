@@ -1,4 +1,5 @@
 ﻿using Stock_Data;
+using StockData;
 using StockData.Fundamentals;
 using StockUI.PopUp;
 using System;
@@ -83,6 +84,7 @@ namespace StockUI
                 SizeToContent = SizeToContent.Width; //fixes poor sizing
                 FundamentalsGathered = true;
                 Ready = true;
+                Title = "Gathering Fundamentals - Completed";
             }
         }
 
@@ -129,7 +131,7 @@ namespace StockUI
                 Ready = false;
                 Title = "Gathering Fundamentals - Please Wait";
                 Task.Run(() => StartTimer());
-                var stockData = await Task.Run(() => stockRepo.GatherFutureFundamentals(predictionMonth, showErrors));
+                var stockData = await Task.Run(() => stockRepo.GatherFutureFundamentals(predictionMonth, showPredictErrors));
                 PredictionData.ItemsSource = null;
                 PredictionData.ItemsSource = stockData;
                 if (ADX.Text != "")
@@ -160,6 +162,7 @@ namespace StockUI
                 PredictionData.ItemsSource = stockData;
                 SizeToContent = SizeToContent.Width;
                 Ready = true;
+                Title = "Gathering Fundamentals - Completed";
             }         
         }
 
@@ -280,36 +283,8 @@ namespace StockUI
             string MinimumDelay = popup.MinimumDelay;
             string MinimumGrowth = popup.MinimumGrowth;
             string MinimumPrice = popup.MinimumPrice;
-
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            if(APIKey != String.Empty)
-            {
-                config.AppSettings.Settings.Remove("APIKey");
-                config.AppSettings.Settings.Add("APIKey", APIKey);
-            }
-            if (MinimumGain != String.Empty)
-            {
-                config.AppSettings.Settings.Remove("MinimumGain");
-                config.AppSettings.Settings.Add("MinimumGain", MinimumGain);
-            }
-            if (MinimumDelay != String.Empty)
-            {
-                config.AppSettings.Settings.Remove("MinimumDelay");
-                config.AppSettings.Settings.Add("MinimumDelay", MinimumDelay);
-            }
-            if (MinimumGrowth != String.Empty)
-            {
-                config.AppSettings.Settings.Remove("MinimumGrowth");
-                config.AppSettings.Settings.Add("MinimumGrowth", MinimumGrowth);
-            }
-            if (MinimumPrice != String.Empty)
-            {
-                config.AppSettings.Settings.Remove("MinimumPrice");
-                config.AppSettings.Settings.Add("MinimumPrice", MinimumPrice);
-            }
-            
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection("appSettings");
+            StockSettings settings = new StockSettings();
+            settings.SaveSettings(APIKey, MinimumGain, MinimumDelay, MinimumGrowth, MinimumPrice);
         }
     }
 }

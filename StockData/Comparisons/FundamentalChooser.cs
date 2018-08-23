@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockData.Properties;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Dynamic;
@@ -13,8 +14,8 @@ namespace Stock_Data
 {
     public class FundamentalChooser
     {
-        readonly double minimumGain = double.Parse(ConfigurationManager.AppSettings["MinimumGain"]);
-        readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
+        readonly double minimumGain = double.Parse(Settings.Default.MinimumGain);
+        readonly string testFolder = Settings.Default.MinimumGain;
 
         private List<string> finished = new List<string>();
 
@@ -191,6 +192,7 @@ namespace Stock_Data
         public void SaveComparisons(List<IComparisonResult> comparisonData, string month)
         {
             var headers = "Test Name, Success%, Total, Success, AvgGain"; //sets header string
+            Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
             var path = $@"..\..\..\Files\Results\{testFolder}\{month}.csv";
             using (var file = File.CreateText(path))
             {
@@ -324,6 +326,7 @@ namespace Stock_Data
             headers = headers.Substring(2);
 
             var path = $@"..\..\..\Files\Results\{testFolder}\Combined\Combined.csv";
+            Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\");
             DirectoryInfo di = Directory.CreateDirectory($@"..\..\..\Files\Results\{testFolder}\Combined\");
 
             try

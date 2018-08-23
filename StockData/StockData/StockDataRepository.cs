@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using StockData.Properties;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,9 +12,9 @@ namespace Stock_Data
     public class StockDataRepository
     {
         private List<IStockData> _stockData;
-        readonly double minimumGrowth = double.Parse(ConfigurationManager.AppSettings["MinimumGrowth"]);
-        readonly int minimumPrice = int.Parse(ConfigurationManager.AppSettings["MinimumPrice"]);
-        readonly string testFolder = ConfigurationManager.AppSettings["MinimumGain"];
+        readonly double minimumGrowth = double.Parse(Settings.Default.MinimumGrowth);
+        readonly int minimumPrice = int.Parse(Settings.Default.MinimumPrice);
+        readonly string testFolder = Settings.Default.MinimumGain;
         public static int stockCount = 0;
         public static int fundCount = 0;
         private List<IFutureData> _fundList;

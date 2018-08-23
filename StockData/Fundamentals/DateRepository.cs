@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using StockData.Properties;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,9 +16,9 @@ namespace StockData.Fundamentals
 {
     public class DateRepository
     {
-        private readonly int delay = int.Parse(ConfigurationManager.AppSettings["APIDelay"]); //Delay as mandated by API
+        private readonly int delay = int.Parse(Settings.Default.APIDelay); //Delay as mandated by API
         RestClient client = new RestClient("https://www.alphavantage.co/"); //Preps client for calls
-        private readonly string apiKey = ConfigurationManager.AppSettings["APIKey"]; //Change as needed
+        private readonly string apiKey = Settings.Default.APIKey; //Change as needed
 
         private static Dictionary<string, string> searchList = new Dictionary<string, string>();
 

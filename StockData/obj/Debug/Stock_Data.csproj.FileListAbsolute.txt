@@ -11,3 +11,4 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\Stock_Dat
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\Stock_Data.csproj.CopyComplete
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.dll
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\obj\Debug\StockData.pdb
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockData\bin\Debug\StockData.dll.config

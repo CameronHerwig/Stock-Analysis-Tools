@@ -7,7 +7,6 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.g.r
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.Properties.Resources.resources
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.csproj.GenerateResource.cache
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.csproj.CoreCompileInputs.cache
-C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\StockUI.exe.config
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\StockUI.exe
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\StockUI.pdb
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI.exe
@@ -26,3 +25,4 @@ C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\StockUI_Mar
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\HelpScreen.baml
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\Settings.g.cs
 C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\obj\Debug\PopUp\Settings.baml
+C:\Users\cherw\Desktop\Github\Stock Analysis Tools\StockUI\bin\Debug\StockData.dll.config
